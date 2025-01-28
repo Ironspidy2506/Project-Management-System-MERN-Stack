@@ -3,18 +3,19 @@ import User from "../models/Users.js";
 
 const authUser = async (req, res, next) => {
   try {
-    const { token } = req.headers;
+    const { token, mtoken } = req.headers;
+    const authToken = mtoken || token;
 
-    if (!token) {
+    if (!authToken) {
       return res.status(401).json({
         success: false,
         message: "Not Authorized. Please log in again.",
       });
     }
 
-    const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
+    const decode = jwt.verify(authToken, process.env.JWT_SECRET_KEY);
     const user = await User.findById(decode.id).select("-password");
+
     if (!user) {
       return res.status(404).json({ success: false, error: "User not found" });
     }

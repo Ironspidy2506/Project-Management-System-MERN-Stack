@@ -26,6 +26,8 @@ userRouter.get("/get-my-profile", authUser, getUserProfile);
 
 userRouter.get("/get-users", authAdmin, getUsers);
 
+userRouter.get("/get-users-manager", authUser, getUsers);
+
 userRouter.get("/get-users-for-performance", authUser, getUsers);
 
 userRouter.post("/add-user", authAdmin, addUser);
