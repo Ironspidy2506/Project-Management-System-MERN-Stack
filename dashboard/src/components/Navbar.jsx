@@ -3,9 +3,11 @@ import { AdminContext } from "../context/AdminContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext.jsx";
 import KorusImg from "../assets/Korus.png";
+import { ManagerContext } from "../context/ManagerContext.jsx";
 
 const Navbar = ({ toggleSidebar }) => {
   const { atoken, setAToken } = useContext(AdminContext);
+  const { mtoken, setMToken } = useContext(ManagerContext);
   const { token, setToken } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -14,6 +16,11 @@ const Navbar = ({ toggleSidebar }) => {
     if (atoken) {
       setAToken("");
       localStorage.removeItem("atoken");
+    }
+
+    if (mtoken) {
+      setMToken("");
+      localStorage.removeItem("mtoken");
     }
 
     if (token) {
@@ -25,7 +32,6 @@ const Navbar = ({ toggleSidebar }) => {
   return (
     <nav className="z-50 shadow-md w-full fixed top-0 bg-white">
       <div className="w-full px-4 py-4 flex justify-between items-center">
-        {/* Logo and Title */}
         <div className="flex items-center space-x-4">
           <button
             onClick={toggleSidebar}

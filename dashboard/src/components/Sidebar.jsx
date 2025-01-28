@@ -7,9 +7,11 @@ import { FaChartLine, FaTasks } from "react-icons/fa";
 import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { FaUser, FaUsers } from "react-icons/fa6";
 import { UserContext } from "../context/UserContext.jsx";
+import { ManagerContext } from "../context/ManagerContext.jsx";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { atoken } = useContext(AdminContext);
+  const { mtoken } = useContext(ManagerContext);
   const { token } = useContext(UserContext);
 
   const handleOverlayClick = (e) => {
@@ -20,7 +22,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <>
-      {(atoken || token) && isOpen && (
+      {(atoken || mtoken || token) && isOpen && (
         <div
           id="overlay"
           className="fixed inset-0  md:hidden"
@@ -33,7 +35,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 transition-transform duration-300 ease-in-out`}
       >
-        
         <nav className="flex flex-col mt-10 px-6 pb-6 space-y-6">
           {/* Admin Links */}
           {atoken && (
@@ -125,7 +126,99 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </>
           )}
 
-          {/* Doctor Links */}
+          {/* Manager Links */}
+          {mtoken && (
+            <>
+              <NavLink
+                to="/manager-dashboard"
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 text-sm font-medium px-4 py-2 rounded-md transition ${
+                    isActive
+                      ? "bg-blue-100 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`
+                }
+                onClick={toggleSidebar}
+              >
+                <GrDashboard className="text-lg" />
+                <span className="text-md">Dashboard</span>
+
+              </NavLink>
+              <NavLink
+                to="/manager-projects"
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 text-sm font-medium px-4 py-2 rounded-md transition ${
+                    isActive
+                      ? "bg-blue-100 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`
+                }
+                onClick={toggleSidebar}
+              >
+                <MdDashboard className="text-lg" />
+                <span className="text-md">Projects</span>
+              </NavLink>
+              <NavLink
+                to="/manager-tasks"
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 text-sm font-medium px-4 py-2 rounded-md transition ${
+                    isActive
+                      ? "bg-blue-100 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`
+                }
+                onClick={toggleSidebar}
+              >
+                <FaTasks className="text-lg" />
+                <span className="text-md">Tasks</span>
+              </NavLink>
+
+              <NavLink
+                to="/manager-performance"
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 text-sm font-medium px-4 py-2 rounded-md transition ${
+                    isActive
+                      ? "bg-blue-100 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`
+                }
+                onClick={toggleSidebar}
+              >
+                <FaChartLine className="text-lg" />
+                <span className="text-md">Performance</span>
+              </NavLink>
+              <NavLink
+                to="/manager-employees"
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 text-sm font-medium px-4 py-2 rounded-md transition ${
+                    isActive
+                      ? "bg-blue-100 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`
+                }
+                onClick={toggleSidebar}
+              >
+                <FaUsers className="text-lg" />
+                <span className="text-md">Employees</span>
+              </NavLink>
+              <NavLink
+                to="/manager-profile"
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 text-sm font-medium px-4 py-2 rounded-md transition ${
+                    isActive
+                      ? "bg-blue-100 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`
+                }
+                onClick={toggleSidebar}
+              >
+                <FaUser className="text-lg" />
+                <span className="text-md">Profile</span>
+              </NavLink>
+            </>
+          )}
+
+          {/* Employee Links */}
           {token && (
             <>
               <NavLink

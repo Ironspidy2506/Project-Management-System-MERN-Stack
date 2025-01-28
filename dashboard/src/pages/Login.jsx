@@ -1,14 +1,16 @@
 import React, { useContext, useState } from "react";
-import { AdminContext } from "../context/AdminContext";
+import { AdminContext } from "../context/AdminContext.jsx";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { UserContext } from "../context/UserContext";
+import { UserContext } from "../context/UserContext.jsx";
+import { ManagerContext } from "../context/ManagerContext.jsx";
 
 const Login = () => {
   const [state, setState] = useState("User");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setAToken } = useContext(AdminContext);
+  const { setMToken } = useContext(ManagerContext);
   const { setToken } = useContext(UserContext);
 
   const onSubmitHandler = async (e) => {
@@ -38,11 +40,17 @@ const Login = () => {
             password,
           }
         );
-        
 
         if (data.success) {
-          localStorage.setItem("token", data.token);
-          setToken(data.token);
+          if (data.mtoken) {
+            localStorage.setItem("mtoken", data.mtoken);
+            setMToken(data.mtoken);
+          } else if (data.token) {
+            localStorage.setItem("token", data.token);
+            setToken(data.token);
+          } else {
+            console.error("No valid token received.");
+          }
         } else {
           toast.error(data.message);
         }

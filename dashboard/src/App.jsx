@@ -1,13 +1,9 @@
 import React, { useState, useContext } from "react";
+import { Route, Routes } from "react-router-dom";
 import Login from "./pages/Login.jsx";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { AdminContext } from "./context/AdminContext.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Sidebar from "./components/Sidebar.jsx";
-import { Route, Routes } from "react-router-dom";
 import Dashboard from "./pages/Admin/Dashboard.jsx";
-import { UserContext } from "./context/UserContext.jsx";
 import Project from "./pages/Admin/Project.jsx";
 import Performance from "./pages/Admin/Performance.jsx";
 import Tasks from "./pages/Admin/Tasks.jsx";
@@ -18,18 +14,29 @@ import EmployeeProjects from "./pages/Users/EmployeeProjects.jsx";
 import EmployeeProfile from "./pages/Users/EmployeeProfile.jsx";
 import EmployeeDashboard from "./pages/Users/EmployeeDashboard.jsx";
 import EmployeePerformance from "./pages/Users/EmployeePerformance.jsx";
+import { AdminContext } from "./context/AdminContext.jsx";
+import { UserContext } from "./context/UserContext.jsx";
+import { ManagerContext } from "./context/ManagerContext.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ManagerTasks from "./pages/Manager/ManagerTasks.jsx";
+import ManagerProjects from "./pages/Manager/ManagerProjects.jsx";
+import ManagerDashboard from "./pages/Manager/ManagerDashboard.jsx";
+import ManagerProfile from "./pages/Manager/ManagerProfile.jsx";
+import ManagerPerformance from "./pages/Manager/ManagerPerformance.jsx";
+import ManagerEmployees from "./pages/Manager/ManagerEmployees.jsx";
 
 const App = () => {
   const { atoken } = useContext(AdminContext);
+  const { mtoken } = useContext(ManagerContext);
   const { token } = useContext(UserContext);
-  // const {dtoken}
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  return atoken || token ? (
+  return atoken || mtoken || token ? (
     <div className="flex flex-col min-h-screen">
       <ToastContainer />
       <Navbar toggleSidebar={toggleSidebar} />
@@ -46,8 +53,11 @@ const App = () => {
               element={
                 <>
                   <h2 className="text-xl font-semibold text-center mb-6 text-blue-500">
-                    Welcome to the {atoken ? "Admin" : "Employee"} Dashboard!
+                    Welcome to the{" "}
+                    {atoken ? "Admin" : mtoken ? "Manager" : "Employee"}{" "}
+                    Dashboard!
                   </h2>
+
                   <h3 className="text-lg font-semibold text-center mb-6 text-blue-500">
                     Please select an option to continue!
                   </h3>
@@ -66,15 +76,20 @@ const App = () => {
             <Route path="/employee-projects" element={<EmployeeProjects />} />
             <Route path="/employee-tasks" element={<EmployeeTasks />} />
             <Route path="/employee-profile" element={<EmployeeProfile />} />
-            <Route path="/employee-performance" element={<EmployeePerformance/>} />
-
-
-            {/* <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-            <Route path="/doctor-profile" element={<DoctorProfile />} />
             <Route
-              path="/doctor-appointments"
-              element={<DoctorAppointments />}
-            /> */}
+              path="/employee-performance"
+              element={<EmployeePerformance />}
+            />
+
+            <Route path="/manager-dashboard" element={<ManagerDashboard />} />
+            <Route path="/manager-projects" element={<ManagerProjects />} />
+            <Route path="/manager-tasks" element={<ManagerTasks />} />
+            <Route path="/manager-profile" element={<ManagerProfile />} />
+            <Route
+              path="/manager-performance"
+              element={<ManagerPerformance />}
+            />
+            <Route path="/manager-employees" element={<ManagerEmployees />} />
           </Routes>
         </div>
       </div>
