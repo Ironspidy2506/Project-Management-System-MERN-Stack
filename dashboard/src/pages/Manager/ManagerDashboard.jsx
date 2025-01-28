@@ -1,12 +1,12 @@
 import React, { useEffect, useContext, useState } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { UserContext } from "../../context/UserContext.jsx";
 import { FaChartLine, FaTasks, FaUsers } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
+import { ManagerContext } from "../../context/ManagerContext.jsx";
 
 const ManagerDashboard = () => {
-  const { token } = useContext(UserContext);
+  const { mtoken } = useContext(ManagerContext);
   const [projects, setProjects] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [performances, setPerformances] = useState([]);
@@ -17,7 +17,7 @@ const ManagerDashboard = () => {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-projects`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
       if (data.success) {
@@ -35,7 +35,7 @@ const ManagerDashboard = () => {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-tasks`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -46,12 +46,31 @@ const ManagerDashboard = () => {
     }
   };
 
+  const getEmployees = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/user/get-users-manager`,
+        {
+          headers: { mtoken },
+        }
+      );
+
+      if (data.success) {
+        setEmployees(data.users);
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-performances`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
       if (data.success) {
@@ -65,12 +84,13 @@ const ManagerDashboard = () => {
   };
 
   useEffect(() => {
-    if (token) {
+    if (mtoken) {
       getProjects();
+      getEmployees();
       getTasks();
       getPerformances();
     }
-  }, [token]);
+  }, [mtoken]);
 
   return (
     <div className="p-6">

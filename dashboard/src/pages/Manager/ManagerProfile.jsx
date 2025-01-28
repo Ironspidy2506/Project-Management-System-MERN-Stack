@@ -1,18 +1,18 @@
 import axios from "axios";
 import React, { useContext, useEffect } from "react";
 import { useState } from "react";
-import { UserContext } from "../../context/UserContext";
+import { ManagerContext } from "../../context/ManagerContext.jsx";
 
 const ManagerProfile = () => {
   const [profile, setProfile] = useState({});
-  const { token } = useContext(UserContext);
+  const { mtoken } = useContext(ManagerContext);
 
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-profile`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -23,10 +23,10 @@ const ManagerProfile = () => {
   };
 
   useEffect(() => {
-    if (token) {
+    if (mtoken) {
       getProfile();
     }
-  }, [token]);
+  }, [mtoken]);
 
   return (
     <div className="p-6">

@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { AdminContext } from "../../context/AdminContext.jsx";
+import { ManagerContext } from "../../context/ManagerContext.jsx";
 
 const ManagerEmployee = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +18,7 @@ const ManagerEmployee = () => {
   const [state, setState] = useState("Add");
   const [employees, setEmployees] = useState([]);
   const [departments, setDepartments] = useState([]);
-  const { atoken } = useContext(AdminContext);
+  const { mtoken } = useContext(ManagerContext);
 
   const roles = ["Admin", "Manager", "User"]; // Role options for dropdown
 
@@ -30,9 +30,9 @@ const ManagerEmployee = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-users`,
+        `http://localhost:5000/api/user/get-users-manager`,
         {
-          headers: { atoken },
+          headers: { mtoken },
         }
       );
 
@@ -47,10 +47,10 @@ const ManagerEmployee = () => {
   };
 
   useEffect(() => {
-    if (atoken) {
+    if (mtoken) {
       getEmployees();
     }
-  }, [atoken]);
+  }, [mtoken]);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -61,7 +61,7 @@ const ManagerEmployee = () => {
           `http://localhost:5000/api/user/add-user`,
           employeeDetails,
           {
-            headers: { atoken },
+            headers: { mtoken },
           }
         );
 
@@ -80,7 +80,7 @@ const ManagerEmployee = () => {
           `http://localhost:5000/api/user/edit-user/${employeeDetails._id}`,
           employeeDetails,
           {
-            headers: { atoken },
+            headers: { mtoken },
           }
         );
 
@@ -114,7 +114,7 @@ const ManagerEmployee = () => {
       const { data } = await axios.delete(
         `http://localhost:5000/api/user/delete-user/${_id}`,
         {
-          headers: { atoken },
+          headers: { mtoken },
         }
       );
       if (data.success) {
@@ -133,7 +133,7 @@ const ManagerEmployee = () => {
       const { data } = await axios.get(
         `http://localhost:5000/api/department/get-departments`,
         {
-          headers: { atoken },
+          headers: { mtoken },
         }
       );
 
@@ -148,10 +148,10 @@ const ManagerEmployee = () => {
   };
 
   useEffect(() => {
-    if (atoken) {
+    if (mtoken) {
       getDepartments();
     }
-  }, [atoken]);
+  }, [mtoken]);
 
   const handleEditButtonClick = (employee) => {
     setEmployeeDetails({

@@ -156,8 +156,6 @@ const Project = () => {
       project.assignedResources?.some((empId) => emp._id === empId)
     );
 
-    console.log({ assignedManager, assignedTeamLeads, assignedResources });
-
     // Set project details for editing, passing the full employee objects
     setProjectDetails({
       _id: project._id,

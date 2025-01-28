@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { UserContext } from "../../context/UserContext.jsx";
+import { ManagerContext } from "../../context/ManagerContext.jsx";
 
 const ManagerProjects = () => {
-  const { token } = useContext(UserContext);
+  const { mtoken } = useContext(ManagerContext);
   const [projects, setProjects] = useState([]);
   const [projectId, setProjectId] = useState("");
   const [projectPassword, setProjectPassword] = useState("");
@@ -12,19 +12,21 @@ const ManagerProjects = () => {
   const [startTime, setStartTime] = useState(null);
 
   useEffect(() => {
-    if (token) {
+    if (mtoken) {
       getProjects();
     }
-  }, [token]);
+  }, [mtoken]);
 
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-projects`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
+
+      console.log(data);
 
       if (data.success) {
         setProjects(data.projects);

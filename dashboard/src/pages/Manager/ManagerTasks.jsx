@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { UserContext } from "../../context/UserContext.jsx";
+import { ManagerContext } from "../../context/ManagerContext.jsx";
 
 const ManagerTasks = () => {
-  const { token } = useContext(UserContext);
+  const { mtoken } = useContext(ManagerContext);
   const [employeeId, setEmployeeId] = useState("");
   const [state, setState] = useState("");
   const [viewBy, setViewBy] = useState("");
@@ -29,7 +29,7 @@ const ManagerTasks = () => {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-profile`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
       setEmployeeId(data.user.employeeId);
@@ -43,7 +43,7 @@ const ManagerTasks = () => {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-projects`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
       if (data.success) setProjects(data.projects);
@@ -58,7 +58,7 @@ const ManagerTasks = () => {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-tasks`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -78,12 +78,12 @@ const ManagerTasks = () => {
   };
 
   useEffect(() => {
-    if (token) {
+    if (mtoken) {
       getProfile();
       getProjects();
       getTasks();
     }
-  }, [token]);
+  }, [mtoken]);
 
   const handleEdit = (task) => {
     setTaskDetails({
@@ -139,7 +139,7 @@ const ManagerTasks = () => {
           dueDate,
         },
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -177,7 +177,7 @@ const ManagerTasks = () => {
           dueDate,
         },
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -203,7 +203,7 @@ const ManagerTasks = () => {
       const { data } = await axios.post(
         `http://localhost:5000/api/tasks/complete-task/${taskId}`,
         { status },
-        { headers: { token } }
+        { headers: { mtoken } }
       );
 
       if (data.success) {
@@ -219,7 +219,7 @@ const ManagerTasks = () => {
     try {
       const { data } = await axios.delete(
         `http://localhost:5000/api/tasks/delete-task/${taskId}`,
-        { headers: { token } }
+        { headers: { mtoken } }
       );
 
       if (data.success) {
@@ -236,7 +236,7 @@ const ManagerTasks = () => {
       try {
         const { data } = await axios.get(
           `http://localhost:5000/api/tasks/get-date-wise/${date}`,
-          { headers: { token } }
+          { headers: { mtoken } }
         );
 
         if (data.success) {
@@ -252,7 +252,7 @@ const ManagerTasks = () => {
       try {
         const { data } = await axios.get(
           `http://localhost:5000/api/tasks/get-month-wise/${month}/${year}`,
-          { headers: { token } }
+          { headers: { mtoken } }
         );
 
         if (data.success) {

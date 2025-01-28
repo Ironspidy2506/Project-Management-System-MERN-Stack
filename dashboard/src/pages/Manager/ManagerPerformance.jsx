@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { UserContext } from "../../context/UserContext.jsx";
 import Select from "react-select";
+import { ManagerContext } from "../../context/ManagerContext.jsx";
 
 const ManagerPerformance = () => {
-  const { token } = useContext(UserContext);
+  const { mtoken } = useContext(ManagerContext);
   const [employeeId, setEmployeeId] = useState("");
   const [state, setState] = useState("Add");
   const [viewBy, setViewBy] = useState("");
@@ -33,7 +33,7 @@ const ManagerPerformance = () => {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-profile`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
       setEmployeeId(data.user.employeeId);
@@ -47,7 +47,7 @@ const ManagerPerformance = () => {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-users-for-performance`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -66,7 +66,7 @@ const ManagerPerformance = () => {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-projects`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
       if (data.success) setProjects(data.projects);
@@ -81,7 +81,7 @@ const ManagerPerformance = () => {
       const { data } = await axios.get(
         `http://localhost:5000/api/user/get-my-performances`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -128,7 +128,7 @@ const ManagerPerformance = () => {
           drawings,
         },
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -180,7 +180,7 @@ const ManagerPerformance = () => {
           drawings,
         },
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -219,7 +219,7 @@ const ManagerPerformance = () => {
       const { data } = await axios.delete(
         `http://localhost:5000/api/performances/delete-performance/${performanceId}`,
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -233,13 +233,13 @@ const ManagerPerformance = () => {
   };
 
   useEffect(() => {
-    if (token) {
+    if (mtoken) {
       getPerformances();
       getProfile();
       getProjects();
       getEmployees();
     }
-  }, [token]);
+  }, [mtoken]);
 
   const employeeOptions = employees.map((employee) => ({
     value: employee._id,
@@ -285,7 +285,7 @@ const ManagerPerformance = () => {
       try {
         const { data } = await axios.get(
           `http://localhost:5000/api/performances/get-date-wise/${date}`,
-          { headers: { token } }
+          { headers: { mtoken } }
         );
 
         if (data.success) {
@@ -301,7 +301,7 @@ const ManagerPerformance = () => {
       try {
         const { data } = await axios.get(
           `http://localhost:5000/api/performances/get-month-wise/${month}/${year}`,
-          { headers: { token } }
+          { headers: { mtoken } }
         );
 
         if (data.success) {
