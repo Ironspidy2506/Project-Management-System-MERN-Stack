@@ -6,6 +6,57 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import validator from "validator";
 
+// API for login user
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if the user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "No user found with the provided email.",
+      });
+    }
+
+    // Validate password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.json({
+        success: false,
+        message: "Wrong password.",
+      });
+    }
+
+    // Generate token based on role
+    const payload = { id: user._id, role: user.role };
+    const secretKey = process.env.JWT_SECRET_KEY;
+
+    if (user.role === "Manager") {
+      const mtoken = jwt.sign(payload, secretKey, { expiresIn: "24h" });
+      return res.json({
+        success: true,
+        mtoken,
+        message: "Manager Login Successful",
+      });
+    } else {
+      const token = jwt.sign(payload, secretKey, { expiresIn: "24h" });
+      return res.json({
+        success: true,
+        token,
+        message: "Employee Login Successful",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // API to get users
 const getUsers = async (req, res) => {
   try {
@@ -131,38 +182,6 @@ const deleteUser = async (req, res) => {
       message: "User deleted successfully!",
     });
   } catch (error) {
-    return res.json({ success: false, message: error.message });
-  }
-};
-
-// API for login user
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.json({
-        success: false,
-        message: "No user found with the email id",
-      });
-    }
-
-    const isMatch = bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.json({
-        success: false,
-        message: "Wrong Password",
-      });
-    }
-
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET_KEY
-    );
-    return res.json({ success: true, token });
-  } catch (error) {
-    console.log(error);
     return res.json({ success: false, message: error.message });
   }
 };
