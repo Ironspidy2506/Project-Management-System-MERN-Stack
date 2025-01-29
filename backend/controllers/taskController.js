@@ -5,7 +5,15 @@ import Project from "../models/Project.js";
 // API to Add the task
 const addTask = async (req, res) => {
   try {
-    const { userId, projectId, taskId, task, startDate, dueDate } = req.body;
+    const {
+      userId,
+      projectId,
+      taskId,
+      task,
+      startDate,
+      dueDate,
+      assignedEmployee,
+    } = req.body;
 
     // Validate dueDate
     if (new Date(dueDate) < new Date(startDate)) {
@@ -30,18 +38,39 @@ const addTask = async (req, res) => {
         message: "Project not found",
       });
     }
+    if (assignedEmployee) {
+      const employee = await User.findById(assignedEmployee);
+      if (!employee) {
+        return res.json({
+          success: false,
+          message: "User not found",
+        });
+      }
 
-    const newTask = new Task({
-      taskId,
-      project: project._id,
-      user: user._id,
-      task,
-      startDate,
-      dueDate,
-      added: true,
-    });
+      const newTask = new Task({
+        taskId,
+        project: project._id,
+        user: employee._id,
+        task,
+        startDate,
+        dueDate,
+        assignedBy: user._id,
+      });
 
-    await newTask.save();
+      await newTask.save();
+    } else {
+      const newTask = new Task({
+        taskId,
+        project: project._id,
+        user: user._id,
+        task,
+        startDate,
+        dueDate,
+        added: true,
+      });
+
+      await newTask.save();
+    }
 
     res.json({
       success: true,

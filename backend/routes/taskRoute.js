@@ -8,6 +8,12 @@ import {
   getDateWiseTaskUser,
   getMonthWiseTaskUser,
 } from "../controllers/taskController.js";
+import {
+  getDateWiseTaskUserManager,
+  getEmployeeWiseTasksManager,
+  getManagerAssignedTasks,
+  getMonthWiseTaskUserManager,
+} from "../controllers/managerController.js";
 
 const taskRouter = express.Router();
 
@@ -21,6 +27,30 @@ taskRouter.post("/complete-task/:_id", authUser, completeTask);
 
 taskRouter.get("/get-date-wise/:date", authUser, getDateWiseTaskUser);
 
-taskRouter.get("/get-month-wise/:month/:year", authUser, getMonthWiseTaskUser);
+taskRouter.get("/get-month-wise/:date", authUser, getMonthWiseTaskUser);
+
+taskRouter.get(
+  "/get-date-wise-for-manager/:date",
+  authUser,
+  getDateWiseTaskUserManager
+);
+
+taskRouter.get(
+  "/get-month-wise-for-manager/:month/:year",
+  authUser,
+  getMonthWiseTaskUserManager
+);
+
+taskRouter.get(
+  "/get-employee-wise/:employeeId",
+  authUser,
+  getEmployeeWiseTasksManager
+);
+
+taskRouter.get(
+  "/get-tasks-assigned-by-manager",
+  authUser,
+  getManagerAssignedTasks
+);
 
 export default taskRouter;
