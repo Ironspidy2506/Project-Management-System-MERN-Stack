@@ -36,6 +36,9 @@ const ManagerEmployee = () => {
         }
       );
 
+      console.log(data);
+      
+
       if (data.success) {
         setEmployees(data.users);
       } else {
@@ -58,7 +61,7 @@ const ManagerEmployee = () => {
     if (state === "Add") {
       try {
         const { data } = await axios.post(
-          `http://localhost:5000/api/user/add-user`,
+          `http://localhost:5000/api/user/add-user-manager`,
           employeeDetails,
           {
             headers: { mtoken },
@@ -77,7 +80,7 @@ const ManagerEmployee = () => {
     } else if (state === "Edit") {
       try {
         const { data } = await axios.post(
-          `http://localhost:5000/api/user/edit-user/${employeeDetails._id}`,
+          `http://localhost:5000/api/user/edit-user-manager/${employeeDetails._id}`,
           employeeDetails,
           {
             headers: { mtoken },
@@ -112,11 +115,14 @@ const ManagerEmployee = () => {
   const handleDeleteEmployee = async (_id) => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:5000/api/user/delete-user/${_id}`,
+        `http://localhost:5000/api/user/delete-user-manager/${_id}`,
         {
           headers: { mtoken },
         }
       );
+
+      console.log(data);
+      
       if (data.success) {
         toast.success(data.message);
         getEmployees();
@@ -131,7 +137,7 @@ const ManagerEmployee = () => {
   const getDepartments = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/department/get-departments`,
+        `http://localhost:5000/api/department/get-departments-manager`,
         {
           headers: { mtoken },
         }
@@ -180,7 +186,7 @@ const ManagerEmployee = () => {
             onClick={() => setIsModalOpen(true)}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Add Employee
+          + Add Employee
           </button>
         </div>
       </header>
@@ -191,25 +197,25 @@ const ManagerEmployee = () => {
           <table className="min-w-full border-collapse bg-white shadow rounded-lg overflow-hidden">
             <thead>
               <tr className="bg-blue-400 text-white">
-                <th className="px-6 py-3 text-center text-sm font-semibold">
+                <th className="border px-6 py-3 text-center text-sm font-semibold">
                   Employee ID
                 </th>
-                <th className="px-6 py-3 text-center text-sm font-semibold">
+                <th className="border px-6 py-3 text-center text-sm font-semibold">
                   Name
                 </th>
-                <th className="px-6 py-3 text-center text-sm font-semibold">
+                <th className="border px-6 py-3 text-center text-sm font-semibold">
                   Email
                 </th>
-                <th className="px-6 py-3 text-center text-sm font-semibold">
+                <th className="border px-6 py-3 text-center text-sm font-semibold">
                   Department
                 </th>
-                <th className="px-6 py-3 text-center text-sm font-semibold">
+                <th className="border px-6 py-3 text-center text-sm font-semibold">
                   Role
                 </th>
-                <th className="px-6 py-3 text-center text-sm font-semibold">
+                <th className="border px-6 py-3 text-center text-sm font-semibold">
                   Phone
                 </th>
-                <th className="px-6 py-3 text-center text-sm font-semibold">
+                <th className="border px-6 py-3 text-center text-sm font-semibold">
                   Actions
                 </th>
               </tr>
@@ -222,25 +228,25 @@ const ManagerEmployee = () => {
                     index % 2 === 0 ? "bg-gray-50" : "bg-white"
                   } hover:bg-gray-100`}
                 >
-                  <td className="px-6 py-4 text-sm text-center text-gray-500">
+                  <td className=" border px-6 py-4 text-sm text-center text-gray-500">
                     {employee.employeeId}
                   </td>
-                  <td className="px-6 py-4 text-sm text-center text-gray-800">
+                  <td className=" border px-6 py-4 text-sm text-center text-gray-800">
                     {employee.name}
                   </td>
-                  <td className="px-6 py-4 text-sm text-center text-gray-500">
+                  <td className=" border px-6 py-4 text-sm text-center text-gray-500">
                     {employee.email}
                   </td>
-                  <td className="px-6 py-4 text-sm text-center text-gray-500">
+                  <td className=" border px-6 py-4 text-sm text-center text-gray-500">
                     {employee.department.departmentName}
                   </td>
-                  <td className="px-6 py-4 text-sm text-center text-gray-500">
+                  <td className=" border px-6 py-4 text-sm text-center text-gray-500">
                     {employee.role}
                   </td>
-                  <td className="px-6 py-4 text-sm text-center text-gray-500">
+                  <td className=" border px-6 py-4 text-sm text-center text-gray-500">
                     {employee.phone}
                   </td>
-                  <td className="px-6 py-4 flex justify-center gap-2">
+                  <td className=" border px-6 py-4 flex justify-center gap-2">
                     <button
                       onClick={() => handleEditButtonClick(employee)}
                       className="px-4 py-2 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600"

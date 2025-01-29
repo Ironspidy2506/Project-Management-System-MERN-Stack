@@ -3,19 +3,17 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import Select from "react-select";
 import { ManagerContext } from "../../context/ManagerContext.jsx";
-import { useNavigate } from "react-router-dom";
 
-const ManagerPerformance = () => {
+const ManagerEmployeePerformances = () => {
   const { mtoken } = useContext(ManagerContext);
-  const navigate = useNavigate();
   const [employeeId, setEmployeeId] = useState("");
+  const [employeeIdForFetch, setEmployeeIdForFetch] = useState("");
   const [state, setState] = useState("Add");
   const [viewBy, setViewBy] = useState("");
   const [date, setDate] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
   const [projects, setProjects] = useState([]);
-  const [employees, setEmployees] = useState([]);
   const [performances, setPerformances] = useState([]);
   const [filteredPerformances, setFilteredPerformances] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,58 +28,10 @@ const ManagerPerformance = () => {
     drawings: 0,
   });
 
-  const getProfile = async () => {
-    try {
-      const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-profile`,
-        {
-          headers: { mtoken },
-        }
-      );
-      setEmployeeId(data.user.employeeId);
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-    }
-  };
-
-  const getEmployees = async () => {
-    try {
-      const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-users-for-performance`,
-        {
-          headers: { mtoken },
-        }
-      );
-
-      if (data.success) {
-        setEmployees(data.users);
-      } else {
-        toast.error(data.error);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
-  const getProjects = async () => {
-    try {
-      const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-projects`,
-        {
-          headers: { mtoken },
-        }
-      );
-      if (data.success) setProjects(data.projects);
-      else toast.error(data.error);
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-performances`,
+        `http://localhost:5000/api/user/get-employees-performances-for-manager`,
         {
           headers: { mtoken },
         }
@@ -96,183 +46,11 @@ const ManagerPerformance = () => {
     }
   };
 
-  const handleAddPerformance = async () => {
-    const {
-      performanceId,
-      projectId,
-      drawingType,
-      date,
-      drawingReleased,
-      drawings,
-    } = performanceDetails;
-
-    if (
-      !performanceId ||
-      !projectId ||
-      !drawingType ||
-      !date ||
-      !drawingReleased.length ||
-      !drawings
-    ) {
-      toast.error("All fields are required!");
-      return;
-    }
-
-    try {
-      const { data } = await axios.post(
-        `http://localhost:5000/api/performances/add-performance`,
-        {
-          performanceId,
-          projectId,
-          drawingType,
-          date,
-          drawingReleased,
-          drawings,
-        },
-        {
-          headers: { mtoken },
-        }
-      );
-
-      if (data.success) {
-        toast.success(data.message);
-        setShowModal(false);
-        setPerformanceDetails({
-          performanceId: "",
-          projectId: "",
-          drawingType: "",
-          date: "",
-          drawingReleased: [],
-          drawings: 0,
-        });
-        getPerformances();
-      } else toast.error(data.message);
-    } catch (error) {
-      toast.error("Failed to add performance");
-    }
-  };
-
-  const handleEditPerformance = async () => {
-    const {
-      performanceDatabaseId,
-      drawingType,
-      date,
-      drawingReleased,
-      drawings,
-    } = performanceDetails;
-
-    if (
-      !performanceDatabaseId ||
-      !drawingType ||
-      !date ||
-      !drawingReleased.length ||
-      !drawings
-    ) {
-      toast.error("All fields are required!");
-      return;
-    }
-
-    try {
-      const { data } = await axios.post(
-        `http://localhost:5000/api/performances/edit-performance/${performanceDatabaseId}`,
-        {
-          drawingType,
-          date,
-          drawingReleased,
-          drawings,
-        },
-        {
-          headers: { mtoken },
-        }
-      );
-
-      if (data.success) {
-        toast.success(data.message);
-        setShowModal(false);
-        setPerformanceDetails({
-          drawingType: "",
-          date: "",
-          drawingReleased: [],
-          drawings: 0,
-        });
-        getPerformances();
-      } else toast.error(data.message);
-    } catch (error) {
-      toast.error("Failed to edit performance");
-    }
-  };
-
-  const handleEditButtonClick = (performance) => {
-    setShowModal(true);
-    setState("Edit");
-    setPerformanceDetails({
-      performanceDatabaseId: performance._id,
-      projectId: performance.project?._id || "",
-      performanceId: performance.performanceId,
-      drawingType: performance.drawingType,
-      date: performance.date.split("T")[0],
-      drawingReleased: performance.drawingReleased.map((emp) => emp._id),
-      drawings: performance.drawings,
-    });
-  };
-
-  const handleDeletePerformance = async (performanceId) => {
-    try {
-      const { data } = await axios.delete(
-        `http://localhost:5000/api/performances/delete-performance/${performanceId}`,
-        {
-          headers: { mtoken },
-        }
-      );
-
-      if (data.success) {
-        toast.success(data.message);
-        getPerformances();
-      } else toast.error(data.message);
-    } catch (error) {
-      toast.error("Failed to delete performance");
-    }
-  };
-
   useEffect(() => {
     if (mtoken) {
       getPerformances();
-      getProfile();
-      getProjects();
-      getEmployees();
     }
   }, [mtoken]);
-
-  const employeeOptions = employees.map((employee) => ({
-    value: employee._id,
-    label: `${employee.employeeId} - ${employee.name}`,
-  }));
-
-  const drawingTypeOptions = [
-    { value: "New", label: "New" },
-    { value: "Revised", label: "Revised" },
-  ];
-
-  const handleProjectChange = (projectId) => {
-    const selectedProject = projects.find(
-      (project) => project._id === projectId
-    );
-
-    const performanceCount = performances.filter(
-      (performance) =>
-        performance.project?.projectId === selectedProject.projectId
-    ).length;
-
-    const newPerformanceId = `P_${employeeId}_${selectedProject.projectId}_${
-      performanceCount + 1
-    }`;
-
-    setPerformanceDetails((prev) => ({
-      ...prev,
-      projectId: projectId,
-      performanceId: newPerformanceId,
-    }));
-  };
 
   const formatDate = (date) => {
     const d = new Date(date);
@@ -286,7 +64,7 @@ const ManagerPerformance = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/performances/get-date-wise/${date}`,
+          `http://localhost:5000/api/performances/get-date-wise-for-manager/${date}`,
           { headers: { mtoken } }
         );
 
@@ -302,7 +80,23 @@ const ManagerPerformance = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/performances/get-month-wise/${month}/${year}`,
+          `http://localhost:5000/api/performances/get-month-wise-for-manager/${month}/${year}`,
+          { headers: { mtoken } }
+        );
+
+        if (data.success) {
+          setPerformances(data.performances);
+          toast.success(data.message);
+        } else {
+          toast.error(data.error);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    } else if (viewBy === "employee" && employeeIdForFetch) {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:5000/api/performances/get-employee-wise/${employeeIdForFetch}`,
           { headers: { mtoken } }
         );
 
@@ -317,6 +111,44 @@ const ManagerPerformance = () => {
       }
     } else {
       toast.error("Please fill the required fields!");
+    }
+  };
+
+  const handleApprove = async (performanceId) => {
+    try {
+      const { data } = await axios.post(
+        `http://localhost:5000/api/performances/change-status-manager/${performanceId}`,
+        { status: "approved" },
+        { headers: { mtoken } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getPerformances();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to approve performance.");
+    }
+  };
+
+  const handleReject = async (performanceId) => {
+    try {
+      const { data } = await axios.post(
+        `http://localhost:5000/api/performances/change-status-manager/${performanceId}`,
+        { status: "rejected" },
+        { headers: { mtoken } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getPerformances();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to reject performance.");
     }
   };
 
@@ -337,34 +169,10 @@ const ManagerPerformance = () => {
   return (
     <div className="p-6">
       {/* Header */}
-      <header className="flex justify-between items-center bg-white shadow p-3 rounded-md">
+      <header className="flex justify-between items-center bg-white shadow px-3 py-4 rounded-md">
         <h1 className="text-2xl font-semibold text-gray-700">
-          Performance Management
+          Employees Performances Management
         </h1>
-        <div className="flex flex-row gap-2">
-          <button
-            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-            onClick={() => {
-              setShowModal(true);
-              setPerformanceDetails({
-                projectId: "",
-                drawingType: "",
-                date: "",
-                drawingReleased: [],
-                drawings: 0,
-              });
-            }}
-          >
-            + Add Performance
-          </button>
-
-          <button
-            className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
-            onClick={() => navigate("/manager-performance/employee-performances")}
-          >
-            Employee Performances
-          </button>
-        </div>
       </header>
 
       {/* View By Section */}
@@ -382,6 +190,7 @@ const ManagerPerformance = () => {
             <option value="">Select Option</option>
             <option value="date">Date wise</option>
             <option value="month">Month wise</option>
+            <option value="employee">Employee wise</option>
           </select>
         </div>
 
@@ -436,6 +245,20 @@ const ManagerPerformance = () => {
           </div>
         )}
 
+        {viewBy === "employee" && (
+          <div className="flex items-center space-x-2">
+            <label htmlFor="employeeId" className="text-gray-700 font-medium">
+              Enter Employee ID:
+            </label>
+            <input
+              type="text"
+              value={employeeIdForFetch}
+              onChange={(e) => setEmployeeIdForFetch(e.target.value)}
+              className="p-2 border rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+            />
+          </div>
+        )}
+
         <button
           onClick={handleFetch}
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
@@ -462,7 +285,7 @@ const ManagerPerformance = () => {
             <tr>
               <th className="border px-4 py-2 text-center">Performance ID</th>
               <th className="border px-4 py-2 text-center">Project Name</th>
-              <th className="border px-4 py-2 text-center">Drawing Released</th>
+              <th className="border px-4 py-2 text-center">Drawing By</th>
               <th className="border px-4 py-2 text-center">Drawing Type</th>
               <th className="border px-4 py-2 text-center">Drawings</th>
               <th className="border px-4 py-2 text-center">Date</th>
@@ -480,9 +303,7 @@ const ManagerPerformance = () => {
                   {performance.project?.projectName}
                 </td>
                 <td className="border px-4 py-2 text-center">
-                  {performance.drawingReleased
-                    ?.map((user) => `${user.employeeId} - ${user.name}`)
-                    .join(", ")}
+                  {performance.user?.name}
                 </td>
                 <td className="border px-4 py-2 text-center">
                   {performance.drawingType}
@@ -497,7 +318,7 @@ const ManagerPerformance = () => {
                   className={`border px-4 py-2 text-center ${
                     performance.status === "pending"
                       ? "text-yellow-500 font-bold"
-                      : performance.status === "completed"
+                      : performance.status === "approved"
                       ? "text-green-500 font-bold"
                       : performance.status === "rejected"
                       ? "text-red-500 font-bold"
@@ -511,17 +332,17 @@ const ManagerPerformance = () => {
                   {performance.status === "pending" ? (
                     <div className="flex flex-col md:flex-row items-center justify-center gap-1 w-full">
                       <button
-                        onClick={() => handleEditButtonClick(performance)}
-                        className="bg-yellow-500 text-white py-1 px-2 rounded hover:bg-yellow-600 w-full md:flex-1"
+                        onClick={() => handleApprove(performance._id)}
+                        className="bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 w-full md:flex-1"
                       >
-                        Edit
+                        Approve
                       </button>
 
                       <button
-                        onClick={() => handleDeletePerformance(performance._id)}
+                        onClick={() => handleReject(performance._id)}
                         className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 w-full md:flex-1"
                       >
-                        Delete
+                        Reject
                       </button>
                     </div>
                   ) : null}
@@ -714,4 +535,4 @@ const ManagerPerformance = () => {
   );
 };
 
-export default ManagerPerformance;
+export default ManagerEmployeePerformances;

@@ -2,14 +2,21 @@ import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { ManagerContext } from "../../context/ManagerContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 const ManagerProjects = () => {
   const { mtoken } = useContext(ManagerContext);
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [projectId, setProjectId] = useState("");
   const [projectPassword, setProjectPassword] = useState("");
   const [isTracking, setIsTracking] = useState(false);
   const [startTime, setStartTime] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState("");
+  const [costId, setCostId] = useState("");
+  const [costName, setCostName] = useState("");
+  const [costAmount, setCostAmount] = useState("");
 
   useEffect(() => {
     if (mtoken) {
@@ -26,8 +33,6 @@ const ManagerProjects = () => {
         }
       );
 
-      console.log(data);
-
       if (data.success) {
         setProjects(data.projects);
       } else {
@@ -35,6 +40,38 @@ const ManagerProjects = () => {
       }
     } catch (error) {
       toast.error(error.message);
+    }
+  };
+
+  const handleAddCost = async () => {
+    try {
+      if (!selectedProject || !costName || !costAmount) {
+        toast.error("Please fill all fields!");
+        return;
+      }
+
+      const { data } = await axios.post(
+        `http://localhost:5000/api/project/add-cost`,
+        { projectId: selectedProject, costId, costName, costAmount },
+        {
+          headers: { mtoken },
+        }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setIsModalOpen(false);
+        setSelectedProject("");
+        setCostName("");
+        setCostAmount("");
+        getProjects(); // Refresh the projects to reflect the updated cost
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "An unexpected error occurred."
+      );
     }
   };
 
@@ -49,7 +86,7 @@ const ManagerProjects = () => {
         `http://localhost:5000/api/project-log/start-project`,
         { projectId, projectPassword },
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -63,7 +100,6 @@ const ManagerProjects = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      console.error("Error starting project:", error);
       toast.error(
         error.response?.data?.message || "An unexpected error occurred."
       );
@@ -88,7 +124,7 @@ const ManagerProjects = () => {
         `http://localhost:5000/api/project-log/end-project`,
         { logId },
         {
-          headers: { token },
+          headers: { mtoken },
         }
       );
 
@@ -102,7 +138,6 @@ const ManagerProjects = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      console.error("Error stopping project:", error);
       toast.error(
         error.response?.data?.message || "An unexpected error occurred."
       );
@@ -117,10 +152,97 @@ const ManagerProjects = () => {
           <h1 className="text-2xl font-semibold text-gray-700">
             Project Management
           </h1>
-          <button className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-            + Add Cost
-          </button>
+          <div className="flex flex-row gap-2">
+            <button
+              className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              onClick={() => setIsModalOpen(true)}
+            >
+              + Add Cost
+            </button>
+            <button
+              className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
+              onClick={() => navigate(`/manager-projects/cost-log`)}
+            >
+              Cost Log
+            </button>
+          </div>
         </header>
+
+        {/* Modal for Adding Cost */}
+        {isModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+              <h2 className="text-xl font-bold mb-4 text-center">Add Cost</h2>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">
+                  Select Project
+                </label>
+                <select
+                  value={selectedProject}
+                  onChange={(e) => setSelectedProject(e.target.value)}
+                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                  <option value="">Select a project</option>
+                  {projects.map((project) => (
+                    <option key={project._id} value={project._id}>
+                      {project.projectId} - {project.projectName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">
+                  Cost ID
+                </label>
+                <input
+                  type="text"
+                  value={costId}
+                  onChange={(e) => setCostId(e.target.value)}
+                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  placeholder="Cost ID"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">
+                  Cost Name
+                </label>
+                <input
+                  type="text"
+                  value={costName}
+                  onChange={(e) => setCostName(e.target.value)}
+                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  placeholder="Enter cost name"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">
+                  Cost Amount
+                </label>
+                <input
+                  type="number"
+                  value={costAmount}
+                  onChange={(e) => setCostAmount(e.target.value)}
+                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  placeholder="Enter cost amount"
+                />
+              </div>
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAddCost}
+                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                >
+                  Add Cost
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Inputs for Project ID and Password */}
         <div className="mt-6 flex items-center space-x-4">

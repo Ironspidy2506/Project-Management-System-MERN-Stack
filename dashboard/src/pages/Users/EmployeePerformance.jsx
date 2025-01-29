@@ -486,7 +486,7 @@ const EmployeePerformance = () => {
                   className={`border px-4 py-2 text-center ${
                     performance.status === "pending"
                       ? "text-yellow-500 font-bold"
-                      : performance.status === "completed"
+                      : performance.status === "approved"
                       ? "text-green-500 font-bold"
                       : performance.status === "rejected"
                       ? "text-red-500 font-bold"

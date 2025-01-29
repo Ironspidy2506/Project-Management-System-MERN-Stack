@@ -25,6 +25,9 @@ import ManagerDashboard from "./pages/Manager/ManagerDashboard.jsx";
 import ManagerProfile from "./pages/Manager/ManagerProfile.jsx";
 import ManagerPerformance from "./pages/Manager/ManagerPerformance.jsx";
 import ManagerEmployees from "./pages/Manager/ManagerEmployees.jsx";
+import ManagerEmployeeTasks from "./pages/Manager/ManagerEmployeeTasks.jsx";
+import ManagerEmployeePerformances from "./pages/Manager/ManagerEmployeePerformances.jsx";
+import ManagerCostLog from "./pages/Manager/ManagerCostLog.jsx";
 
 const App = () => {
   const { atoken } = useContext(AdminContext);
@@ -83,11 +86,25 @@ const App = () => {
 
             <Route path="/manager-dashboard" element={<ManagerDashboard />} />
             <Route path="/manager-projects" element={<ManagerProjects />} />
+            <Route
+              path="/manager-projects/cost-log"
+              element={<ManagerCostLog />}
+            />
+
             <Route path="/manager-tasks" element={<ManagerTasks />} />
+            <Route
+              path="/manager-tasks/employee-tasks"
+              element={<ManagerEmployeeTasks />}
+            />
+
             <Route path="/manager-profile" element={<ManagerProfile />} />
             <Route
               path="/manager-performance"
               element={<ManagerPerformance />}
+            />
+            <Route
+              path="/manager-performance/employee-performances"
+              element={<ManagerEmployeePerformances />}
             />
             <Route path="/manager-employees" element={<ManagerEmployees />} />
           </Routes>

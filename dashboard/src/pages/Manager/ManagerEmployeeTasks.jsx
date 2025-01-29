@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
+import Select from "react-select";
 import { ManagerContext } from "../../context/ManagerContext.jsx";
 
-const ManagerTasks = () => {
+const ManagerEmployeeTasks = () => {
   const { mtoken } = useContext(ManagerContext);
-  const navigate = useNavigate();
   const [employeeId, setEmployeeId] = useState("");
+  const [employeeIdForFetch, setEmployeeIdForFetch] = useState("");
   const [state, setState] = useState("");
   const [viewBy, setViewBy] = useState("");
   const [date, setDate] = useState("");
@@ -24,12 +24,15 @@ const ManagerTasks = () => {
     task: "",
     startDate: "",
     dueDate: "",
+    assignedEmployee: null,
+    taskDatabaseId: "",
   });
+  const [employees, setEmployees] = useState([]);
 
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-profile`,
+        "http://localhost:5000/api/user/get-my-profile",
         {
           headers: { mtoken },
         }
@@ -43,7 +46,7 @@ const ManagerTasks = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-projects`,
+        "http://localhost:5000/api/user/get-my-projects",
         {
           headers: { mtoken },
         }
@@ -55,50 +58,74 @@ const ManagerTasks = () => {
     }
   };
 
-  const getTasks = async () => {
+  const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-tasks`,
+        "http://localhost:5000/api/user/get-users-manager",
         {
           headers: { mtoken },
         }
       );
 
-      if (data.success) setTasks(data.tasks);
-      else toast.error(data.error);
+      if (data.success) {
+        setEmployees(data.users);
+      } else {
+        toast.error(data.error);
+      }
     } catch (error) {
       toast.error(error.message);
     }
   };
 
-  const formatDate = (date) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
+  const getTasks = async () => {
+    try {
+      const { data } = await axios.get(
+        "http://localhost:5000/api/tasks/get-tasks-assigned-by-manager",
+        { headers: { mtoken } }
+      );
+
+      if (data.success) {
+        setTasks(data.tasks);
+        setFilteredTasks(data.tasks);
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error("Error fetching tasks");
+    }
   };
 
-  useEffect(() => {
-    if (mtoken) {
-      getProfile();
-      getProjects();
-      getTasks();
-    }
-  }, [mtoken]);
+  const handleEmployeeSelectChange = (selectedOption) => {
+    setTaskDetails((prev) => {
+      const selectedEmployee = employees.find(
+        (employee) => employee._id === selectedOption.value
+      );
 
-  const handleEdit = (task) => {
-    setTaskDetails({
-      projectId: task.project?._id,
-      taskId: task.taskId,
-      task: task.task,
-      startDate: task.startDate.split("T")[0],
-      dueDate: task.dueDate.split("T")[0],
-      taskDatabaseId: task._id,
+      if (!selectedEmployee) {
+        console.error("Selected employee not found!");
+        return prev;
+      }
+
+      if (!prev.selectedProject) {
+        console.warn("Project must be selected before assigning an employee!");
+        return {
+          ...prev,
+          assignedEmployee: selectedOption.value,
+        };
+      }
+
+      return {
+        ...prev,
+        assignedEmployee: selectedOption.value,
+        taskId: `T_${selectedEmployee.employeeId}_${
+          prev.selectedProject.projectId
+        }_${
+          tasks.filter(
+            (task) => task.project?.projectId === prev.selectedProject.projectId
+          ).length + 1
+        }_${employeeId}`,
+      };
     });
-
-    setShowModal(true);
-    setState("Edit");
   };
 
   const handleProjectChange = (projectId) => {
@@ -106,35 +133,35 @@ const ManagerTasks = () => {
       (project) => project._id === projectId
     );
 
-    if (!selectedProject) {
-      console.error("Project not found");
-      return;
-    }
-
     setTaskDetails((prev) => ({
       ...prev,
       projectId: projectId,
-      taskId: `T_${employeeId}_${selectedProject.projectId}_${
-        tasks.filter(
-          (task) => task.project?.projectId === selectedProject.projectId
-        ).length + 1
-      }`,
+      selectedProject,
     }));
   };
 
   const handleAddTask = async () => {
-    const { projectId, taskId, task, startDate, dueDate } = taskDetails;
+    const { projectId, taskId, task, startDate, dueDate, assignedEmployee } =
+      taskDetails;
 
-    if (!projectId || !taskId || !task || !startDate || !dueDate) {
+    if (
+      !projectId ||
+      !taskId ||
+      !task ||
+      !startDate ||
+      !dueDate ||
+      !assignedEmployee
+    ) {
       toast.error("All fields are required!");
       return;
     }
 
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/tasks/add-task`,
+        "http://localhost:5000/api/tasks/add-task",
         {
           projectId,
+          assignedEmployee,
           taskId,
           task,
           startDate,
@@ -237,7 +264,7 @@ const ManagerTasks = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/tasks/get-date-wise/${date}`,
+          `http://localhost:5000/api/tasks/get-date-wise-for-manager/${date}`,
           { headers: { mtoken } }
         );
 
@@ -253,7 +280,23 @@ const ManagerTasks = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/tasks/get-month-wise/${month}/${year}`,
+          `http://localhost:5000/api/tasks/get-month-wise-for-manager/${month}/${year}`,
+          { headers: { mtoken } }
+        );
+
+        if (data.success) {
+          setTasks(data.tasks);
+          toast.success(data.message);
+        } else {
+          toast.error(data.error);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    } else if (viewBy === "employee" && employeeIdForFetch) {
+      try {
+        const { data } = await axios.get(
+          `http://localhost:5000/api/tasks/get-employee-wise/${employeeIdForFetch}`,
           { headers: { mtoken } }
         );
 
@@ -270,6 +313,23 @@ const ManagerTasks = () => {
       toast.error("Please fill the required fields!");
     }
   };
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  useEffect(() => {
+    if (mtoken) {
+      getProfile();
+      getProjects();
+      getEmployees();
+      getTasks();
+    }
+  }, [mtoken]);
 
   const handleSearch = () => {
     const lowerCaseQuery = searchQuery.toLowerCase();
@@ -291,32 +351,24 @@ const ManagerTasks = () => {
         {/* Header */}
         <header className="flex justify-between items-center bg-white shadow p-3 rounded-md">
           <h1 className="text-2xl font-semibold text-gray-700">
-            Task Management
+            Employees Tasks Management
           </h1>
-          <div className="flex flex-row gap-2">
-            <button
-              className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-              onClick={() => {
-                setShowModal(true);
-                setState("Add");
-                setTaskDetails({
-                  projectId: "",
-                  taskId: "",
-                  task: "",
-                  startDate: "",
-                  dueDate: "",
-                });
-              }}
-            >
-              + Add Task
-            </button>
-            <button
-              className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
-              onClick={() => navigate("/manager-tasks/employee-tasks")}
-            >
-              Employee Tasks
-            </button>
-          </div>
+          <button
+            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            onClick={() => {
+              setShowModal(true);
+              setState("Add");
+              setTaskDetails({
+                projectId: "",
+                taskId: "",
+                task: "",
+                startDate: "",
+                dueDate: "",
+              });
+            }}
+          >
+            + Assign Task
+          </button>
         </header>
 
         {/* View By Section */}
@@ -334,6 +386,7 @@ const ManagerTasks = () => {
               <option value="">Select Option</option>
               <option value="date">Date wise</option>
               <option value="month">Month wise</option>
+              <option value="employee">Employee wise</option>
             </select>
           </div>
 
@@ -388,8 +441,22 @@ const ManagerTasks = () => {
             </div>
           )}
 
+          {viewBy === "employee" && (
+            <div className="flex items-center space-x-2">
+              <label htmlFor="employeeId" className="text-gray-700 font-medium">
+                Enter Employee ID:
+              </label>
+              <input
+                type="text"
+                value={employeeIdForFetch}
+                onChange={(e) => setEmployeeIdForFetch(e.target.value)}
+                className="p-2 border rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+              />
+            </div>
+          )}
+
           <button
-            onClick={handleFetch}
+            onClick={() => handleFetch()}
             className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
           >
             Fetch Tasks
@@ -415,6 +482,7 @@ const ManagerTasks = () => {
                 <th className="border px-4 py-2 text-center">Task ID</th>
                 <th className="border px-4 py-2 text-center">Project Name</th>
                 <th className="border px-4 py-2 text-center">Task</th>
+                <th className="border px-4 py-2 text-center">Assigned To</th>
                 <th className="border px-4 py-2 text-center">Start Date</th>
                 <th className="border px-4 py-2 text-center">Due Date</th>
                 <th className="border px-4 py-2 text-center">Status</th>
@@ -431,6 +499,10 @@ const ManagerTasks = () => {
                     {task.project?.projectName}
                   </td>
                   <td className="border px-4 py-2 text-center">{task.task}</td>
+                  <td className="border px-4 py-2 text-center">
+                    {task.user?.name}
+                  </td>
+
                   <td className="border px-4 py-2 text-center">
                     {formatDate(task.startDate)}
                   </td>
@@ -450,9 +522,8 @@ const ManagerTasks = () => {
                   >
                     {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
                   </td>
-
-                  <td className="border px-4 py-2 text-center space-x-2">
-                    {task.added && task.status === "pending" ? (
+                  <td className="border px-4 py-2 text-center">
+                    {task.status === "pending" ? (
                       <div className="flex flex-col md:flex-row items-center justify-center gap-1 w-full">
                         <button
                           onClick={() =>
@@ -463,12 +534,23 @@ const ManagerTasks = () => {
                           Complete
                         </button>
                         <button
-                          onClick={() => handleEdit(task)}
+                          onClick={() => {
+                            setState("Edit");
+                            setTaskDetails({
+                              projectId: task.project?._id,
+                              taskId: task.taskId,
+                              task: task.task,
+                              startDate: task.startDate.split("T")[0],
+                              dueDate: task.dueDate.split("T")[0],
+                              assignedEmployee: task.user?._id || "",
+                              taskDatabaseId: task._id,
+                            });
+                            setShowModal(true);
+                          }}
                           className="bg-yellow-500 text-white py-1 px-2 rounded hover:bg-yellow-600 w-full md:flex-1"
                         >
                           Edit
                         </button>
-
                         <button
                           onClick={() => handleDeleteTask(task._id)}
                           className="bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600 w-full md:flex-1"
@@ -490,7 +572,7 @@ const ManagerTasks = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-xl font-bold mb-4 text-center">
-              {state === "Add" ? "Add" : "Edit"} Task
+              {state === "Add" ? "Assign" : "Edit"} Employee Task
             </h2>
             <div className="space-y-2">
               <div>
@@ -517,6 +599,40 @@ const ManagerTasks = () => {
               </div>
 
               <div>
+                <label className="block text-gray-700">Assign Employees</label>
+                <Select
+                  id="assignedEmployee"
+                  options={employees
+                    .filter((employee) => employee.role === "User")
+                    .sort((a, b) => a.employeeId - b.employeeId)
+                    .map((employee) => ({
+                      value: employee._id, // Pass the employee's _id here
+                      label: `${employee.employeeId} - ${employee.name}`,
+                    }))}
+                  value={
+                    taskDetails.assignedEmployee
+                      ? {
+                          value: taskDetails.assignedEmployee,
+                          label: `${
+                            employees.find(
+                              (emp) => emp._id === taskDetails.assignedEmployee
+                            )?.employeeId
+                          } - ${
+                            employees.find(
+                              (emp) => emp._id === taskDetails.assignedEmployee
+                            )?.name
+                          }`,
+                        }
+                      : null
+                  }
+                  onChange={handleEmployeeSelectChange}
+                  placeholder="Select Employee"
+                  className="basic-single-select"
+                  classNamePrefix="select"
+                />
+              </div>
+
+              <div className="mb">
                 <label
                   htmlFor="taskId"
                   className="text-gray-700 font-medium mb-2"
@@ -611,4 +727,4 @@ const ManagerTasks = () => {
   );
 };
 
-export default ManagerTasks;
+export default ManagerEmployeeTasks;

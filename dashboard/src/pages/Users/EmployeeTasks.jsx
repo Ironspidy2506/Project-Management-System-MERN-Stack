@@ -466,6 +466,17 @@ const EmployeeTasks = () => {
                           Delete
                         </button>
                       </div>
+                    ) : !task.added && task.status === "pending" ? (
+                      <div className="flex flex-col md:flex-row items-center justify-center gap-1 w-full">
+                        <button
+                          onClick={() =>
+                            handleUpdateStatus(task._id, "completed")
+                          }
+                          className="bg-green-500 text-white py-1 px-2 rounded hover:bg-green-600 w-full md:flex-1"
+                        >
+                          Complete
+                        </button>
+                      </div>
                     ) : null}
                   </td>
                 </tr>
