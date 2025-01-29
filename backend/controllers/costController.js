@@ -7,7 +7,6 @@ const addCost = async (req, res) => {
     const { projectId, userId, costId, costName, costAmount } = req.body;
 
     const user = await User.findById(userId);
-
     const project = await Project.findById(projectId);
 
     const newCost = new Cost({
@@ -20,12 +19,22 @@ const addCost = async (req, res) => {
 
     await newCost.save();
 
-    return res.json({ success: true, message: "Cost Added Successfully" });
+    // Update project currentCost
+    const totalCost = await Cost.aggregate([
+      { $match: { project: project._id } },
+      { $group: { _id: null, total: { $sum: "$costAmount" } } },
+    ]);
+    const newCurrentCost = totalCost.length > 0 ? totalCost[0].total : 0;
+    await Project.findByIdAndUpdate(
+      project._id,
+      { currentCost: newCurrentCost },
+      { new: true }
+    );
+
+    return res.json({ success: true, message: "Cost added successfully" });
   } catch (error) {
-    res.json({
-      success: false,
-      message: error.message,
-    });
+    console.error(error); // Log error for debugging
+    res.json({ success: false, message: error.message });
   }
 };
 
@@ -34,49 +43,68 @@ const editCost = async (req, res) => {
     const { costId } = req.params;
     const { costName, costAmount } = req.body;
 
+    const cost = await Cost.findById(costId);
+    if (!cost) return res.json({ success: false, message: "Cost not found" });
+
     await Cost.findByIdAndUpdate(
       costId,
       { costName, costAmount },
       { new: true }
     );
 
-    return res.json({ success: true, message: "Cost Added Successfully" });
+    // Update project currentCost
+    const totalCost = await Cost.aggregate([
+      { $match: { project: cost.project } },
+      { $group: { _id: null, total: { $sum: "$costAmount" } } },
+    ]);
+    const newCurrentCost = totalCost.length > 0 ? totalCost[0].total : 0;
+    await Project.findByIdAndUpdate(
+      cost.project,
+      { currentCost: newCurrentCost },
+      { new: true }
+    );
+
+    return res.json({ success: true, message: "Cost updated successfully" });
   } catch (error) {
-    res.json({
-      success: false,
-      message: error.message,
-    });
+    console.error(error); // Log error for debugging
+    res.json({ success: false, message: error.message });
   }
 };
 
 const deleteCost = async (req, res) => {
   try {
     const { costId } = req.params;
+    const cost = await Cost.findById(costId);
+    if (!cost) return res.json({ success: false, message: "Cost not found" });
+
     await Cost.findByIdAndDelete(costId);
+
+    const totalCost = await Cost.aggregate([
+      { $match: { project: cost.project } },
+      { $group: { _id: null, total: { $sum: "$costAmount" } } },
+    ]);
+
+    const newCurrentCost = totalCost.length > 0 ? totalCost[0].total : 0;
+    await Project.findByIdAndUpdate(cost.project, {
+      currentCost: newCurrentCost,
+    });
 
     return res.json({ success: true, message: "Cost deleted successfully" });
   } catch (error) {
-    res.json({
-      success: false,
-      message: error.message,
-    });
+    console.error(error); // Log error for debugging
+    res.json({ success: false, message: error.message });
   }
 };
 
 const getCostsAddedByManager = async (req, res) => {
   try {
     const { userId } = req.body;
-    const costs = await Cost.find({ addedBy: userId });
+    const costs = await Cost.find({ addedBy: userId }).populate("project");
 
-    return res.json({
-      success: true,
-      costs,
-    });
+    return res.json({ success: true, costs });
   } catch (error) {
-    res.json({
-      success: false,
-      message: error.message,
-    });
+    console.error(error); // Log error for debugging
+    res.json({ success: false, message: error.message });
   }
 };
 

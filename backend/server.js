@@ -9,8 +9,9 @@ import projectRouter from "./routes/projectRoute.js";
 import projectLogRouter from "./routes/projectLogRoute.js";
 import taskRouter from "./routes/taskRoute.js";
 import performanceRouter from "./routes/performanceRoute.js";
+import costRouter from "./routes/costRoute.js";
 
- // App Config
+// App Config
 const app = express();
 const port = process.env.PORT || 4000;
 dbConnect();
@@ -27,6 +28,7 @@ app.use("/api/projects", projectRouter);
 app.use("/api/project-log", projectLogRouter);
 app.use("/api/tasks", taskRouter);
 app.use("/api/performances", performanceRouter);
+app.use("/api/cost", costRouter);
 
 app.get("/", (req, res) => {
   res.send("API Working");

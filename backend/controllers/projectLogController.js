@@ -5,7 +5,7 @@ import Project from "../models/Project.js";
 
 const startProject = async (req, res) => {
   try {
-    const { userId, projectId, projectPassword } = req.body;
+    const { userId, projectId, projectPassword, startTime } = req.body;
 
     const user = await User.findById(userId);
     if (!user) {
@@ -32,7 +32,7 @@ const startProject = async (req, res) => {
     const projectLog = new ProjectLog({
       project: project._id,
       user: user._id,
-      startTime: Date.now(),
+      startTime,
     });
 
     await projectLog.save();
@@ -53,45 +53,37 @@ const startProject = async (req, res) => {
 
 const endProject = async (req, res) => {
   try {
-    const { logId } = req.body;
+    const { logId, endTime } = req.body;
+
+    if (!endTime) {
+      return res.status(400).json({
+        success: false,
+        message: "End time is required",
+      });
+    }
 
     const projectLog = await ProjectLog.findById(logId);
     if (!projectLog) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Project log not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Project log not found",
+      });
     }
 
-    const endTime = Date.now();
-    const totalMilliseconds =
-      endTime - new Date(projectLog.startTime).getTime();
-    const totalMinutes = totalMilliseconds / (1000 * 60);
+    const totalMilliseconds = Math.abs(
+      new Date(endTime).getTime() - new Date(projectLog.startTime).getTime()
+    );
+    const totalHours = totalMilliseconds / (1000 * 60 * 60);
 
-    const baseHours = Math.floor(totalMinutes / 60);
-    const remainingMinutes = totalMinutes % 60;
-
-    let fractionalHours = 0;
-    if (remainingMinutes > 0 && remainingMinutes <= 15) {
-      fractionalHours = 0.25;
-    } else if (remainingMinutes > 15 && remainingMinutes <= 30) {
-      fractionalHours = 0.5;
-    } else if (remainingMinutes > 30 && remainingMinutes <= 45) {
-      fractionalHours = 0.75;
-    } else if (remainingMinutes > 45) {
-      fractionalHours = 1;
-    }
-
-    const totalTime = baseHours + fractionalHours;
-
-    projectLog.endTime = endTime;
-    projectLog.totalTime = totalTime;
+    projectLog.endTime = new Date(endTime);
+    projectLog.totalTime = totalHours;
 
     await projectLog.save();
 
     return res.status(200).json({
       success: true,
       message: "Time capturing ended successfully",
-      totalTime,
+      totalTime: totalHours,
     });
   } catch (error) {
     console.error("Error ending the project:", error);
