@@ -45,7 +45,11 @@ const EmployeeProjects = () => {
 
       const { data } = await axios.post(
         `http://localhost:5000/api/project-log/start-project`,
-        { projectId, projectPassword },
+        {
+          projectId,
+          projectPassword,
+          startTime: Date.now(), // Send start time as part of the request
+        },
         {
           headers: { token },
         }
@@ -55,7 +59,7 @@ const EmployeeProjects = () => {
         const logId = data.logId;
         localStorage.setItem("currentLogId", logId);
         setIsTracking(true);
-        setStartTime(Date.now());
+        setStartTime(Date.now()); // Set start time locally as well
         toast.success(data.message);
       } else {
         toast.error(data.message);
@@ -84,7 +88,10 @@ const EmployeeProjects = () => {
 
       const { data } = await axios.post(
         `http://localhost:5000/api/project-log/end-project`,
-        { logId },
+        {
+          logId,
+          endTime: Date.now(), // Send end time as part of the request
+        },
         {
           headers: { token },
         }

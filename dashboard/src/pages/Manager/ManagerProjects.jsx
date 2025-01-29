@@ -17,10 +17,14 @@ const ManagerProjects = () => {
   const [costId, setCostId] = useState("");
   const [costName, setCostName] = useState("");
   const [costAmount, setCostAmount] = useState("");
+  const [profile, setProfile] = useState({});
+  const [costs, setCosts] = useState([]);
 
   useEffect(() => {
     if (mtoken) {
       getProjects();
+      getProfile();
+      getCosts();
     }
   }, [mtoken]);
 
@@ -33,6 +37,9 @@ const ManagerProjects = () => {
         }
       );
 
+      console.log(data);
+      
+
       if (data.success) {
         setProjects(data.projects);
       } else {
@@ -43,15 +50,67 @@ const ManagerProjects = () => {
     }
   };
 
+  const getProfile = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/user/get-my-profile`,
+        {
+          headers: { mtoken },
+        }
+      );
+
+      setProfile(data.user);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
+  };
+
+  const getCosts = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/cost/get-cost-added-by-manager`,
+        {
+          headers: { mtoken },
+        }
+      );
+
+      if (data.success) {
+        setCosts(data.costs);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "An unexpected error occurred."
+      );
+    }
+  };
+  const handleProjectChange = (e) => {
+    const projectId = e.target.value;
+    setSelectedProject(projectId);
+
+    const project = projects.find((proj) => proj._id === projectId);
+
+    if (!project) {
+      toast.error("Project not found!");
+      return;
+    }
+
+    const projectCosts = costs.filter((cost) => cost.project._id === projectId);
+    const nextCostIndex = projectCosts.length + 1;
+
+    setCostId(`C_${profile.employeeId}_${project.projectId}_${nextCostIndex}`);
+  };
+
   const handleAddCost = async () => {
     try {
-      if (!selectedProject || !costName || !costAmount) {
+      if (!selectedProject || !costId || !costName || !costAmount) {
         toast.error("Please fill all fields!");
         return;
       }
 
       const { data } = await axios.post(
-        `http://localhost:5000/api/project/add-cost`,
+        `http://localhost:5000/api/cost/add-cost-manager`,
         { projectId: selectedProject, costId, costName, costAmount },
         {
           headers: { mtoken },
@@ -62,9 +121,10 @@ const ManagerProjects = () => {
         toast.success(data.message);
         setIsModalOpen(false);
         setSelectedProject("");
+        setCostId("");
         setCostName("");
         setCostAmount("");
-        getProjects(); // Refresh the projects to reflect the updated cost
+        getProjects();
       } else {
         toast.error(data.message);
       }
@@ -84,7 +144,11 @@ const ManagerProjects = () => {
 
       const { data } = await axios.post(
         `http://localhost:5000/api/project-log/start-project`,
-        { projectId, projectPassword },
+        {
+          projectId,
+          projectPassword,
+          startTime: Date.now(), // Send startTime as part of the request
+        },
         {
           headers: { mtoken },
         }
@@ -94,7 +158,7 @@ const ManagerProjects = () => {
         const logId = data.logId;
         localStorage.setItem("currentLogId", logId);
         setIsTracking(true);
-        setStartTime(Date.now());
+        setStartTime(Date.now()); // Set start time locally as well
         toast.success(data.message);
       } else {
         toast.error(data.message);
@@ -122,7 +186,10 @@ const ManagerProjects = () => {
 
       const { data } = await axios.post(
         `http://localhost:5000/api/project-log/end-project`,
-        { logId },
+        {
+          logId,
+          endTime: Date.now(), // Send endTime as part of the request
+        },
         {
           headers: { mtoken },
         }
@@ -171,7 +238,7 @@ const ManagerProjects = () => {
         {/* Modal for Adding Cost */}
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl">
               <h2 className="text-xl font-bold mb-4 text-center">Add Cost</h2>
               <div className="mb-4">
                 <label className="block text-gray-700 font-medium mb-2">
@@ -179,7 +246,7 @@ const ManagerProjects = () => {
                 </label>
                 <select
                   value={selectedProject}
-                  onChange={(e) => setSelectedProject(e.target.value)}
+                  onChange={handleProjectChange} // Use the function that updates costId
                   className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                 >
                   <option value="">Select a project</option>
@@ -198,6 +265,7 @@ const ManagerProjects = () => {
                   type="text"
                   value={costId}
                   onChange={(e) => setCostId(e.target.value)}
+                  disabled
                   className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                   placeholder="Cost ID"
                 />
@@ -222,22 +290,29 @@ const ManagerProjects = () => {
                   type="number"
                   value={costAmount}
                   onChange={(e) => setCostAmount(e.target.value)}
+                  onWheel={(e) => e.target.blur()}
                   className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
                   placeholder="Enter cost amount"
                 />
               </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
+              <div className="flex gap-2">
                 <button
                   onClick={handleAddCost}
-                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full"
                 >
                   Add Cost
+                </button>
+                <button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setSelectedProject("");
+                    setCostId("");
+                    setCostName("");
+                    setCostAmount("");
+                  }}
+                  className="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400 w-full"
+                >
+                  Cancel
                 </button>
               </div>
             </div>

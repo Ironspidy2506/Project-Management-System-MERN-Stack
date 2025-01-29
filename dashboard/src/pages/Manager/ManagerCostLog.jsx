@@ -1,75 +1,86 @@
 import React, { useState, useEffect, useContext } from "react";
-import { toast } from "react-toastify";
 import axios from "axios";
 import { ManagerContext } from "../../context/ManagerContext.jsx";
-import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ManagerCostLog = () => {
   const { mtoken } = useContext(ManagerContext);
-  const navigate = useNavigate();
-  const [projects, setProjects] = useState([]);
-  const [projectId, setProjectId] = useState("");
-  const [projectPassword, setProjectPassword] = useState("");
-  const [isTracking, setIsTracking] = useState(false);
-  const [startTime, setStartTime] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState("");
-  const [costName, setCostName] = useState("");
-  const [costAmount, setCostAmount] = useState("");
+  const [costs, setCosts] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [editedCost, setEditedCost] = useState({});
 
   useEffect(() => {
     if (mtoken) {
-      getProjects();
+      getCosts();
     }
   }, [mtoken]);
 
-  const getProjects = async () => {
+  const getCosts = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-projects`,
+        `http://localhost:5000/api/cost/get-cost-added-by-manager`,
         {
           headers: { mtoken },
         }
       );
 
       if (data.success) {
-        setProjects(data.projects);
-      } else {
-        toast.error(data.error);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
-  const handleAddCost = async () => {
-    try {
-      if (!selectedProject || !costName || !costAmount) {
-        toast.error("Please fill all fields!");
-        return;
-      }
-
-      const { data } = await axios.post(
-        `http://localhost:5000/api/project/add-cost`,
-        { projectId: selectedProject, costName, costAmount },
-        {
-          headers: { mtoken },
-        }
-      );
-
-      if (data.success) {
-        toast.success(data.message);
-        setIsModalOpen(false);
-        setSelectedProject("");
-        setCostName("");
-        setCostAmount("");
-        getProjects();
+        setCosts(data.costs);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
       toast.error(
         error.response?.data?.message || "An unexpected error occurred."
+      );
+    }
+  };
+
+  const handleEdit = (cost) => {
+    setEditingId(cost._id);
+    setEditedCost({ costName: cost.costName, costAmount: cost.costAmount });
+  };
+
+  const handleSave = async (costId) => {
+    try {
+      const { data } = await axios.post(
+        `http://localhost:5000/api/cost/edit-cost-manager/${costId}`,
+        editedCost,
+        { headers: { mtoken } }
+      );
+
+      console.log();
+
+      if (data.success) {
+        toast.success(data.message);
+        getCosts();
+        setEditingId(null);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "An error occurred while updating."
+      );
+    }
+  };
+
+  const handleDelete = async (costId) => {
+    try {
+      const { data } = await axios.delete(
+        `http://localhost:5000/api/cost/delete-cost-manager/${costId}`,
+        { headers: { mtoken } }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        getCosts();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "An error occurred while deleting."
       );
     }
   };
@@ -83,70 +94,6 @@ const ManagerCostLog = () => {
             Projects Cost Management
           </h1>
         </header>
-
-        {/* Modal for Adding Cost */}
-        {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-              <h2 className="text-xl font-bold mb-4 text-center">Add Cost</h2>
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2">
-                  Select Project
-                </label>
-                <select
-                  value={selectedProject}
-                  onChange={(e) => setSelectedProject(e.target.value)}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                >
-                  <option value="">Select a project</option>
-                  {projects.map((project) => (
-                    <option key={project._id} value={project._id}>
-                      {project.projectId} - {project.projectName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2">
-                  Cost Name
-                </label>
-                <input
-                  type="text"
-                  value={costName}
-                  onChange={(e) => setCostName(e.target.value)}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  placeholder="Enter cost name"
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2">
-                  Cost Amount
-                </label>
-                <input
-                  type="number"
-                  value={costAmount}
-                  onChange={(e) => setCostAmount(e.target.value)}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
-                  placeholder="Enter cost amount"
-                />
-              </div>
-              <div className="flex justify-end space-x-4">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleAddCost}
-                  className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-                >
-                  Add Cost
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Project Table */}
         <div className="mt-8 overflow-x-auto">
@@ -168,8 +115,86 @@ const ManagerCostLog = () => {
                 <th className="border border-gray-200 px-4 py-2 text-center">
                   Cost Amount
                 </th>
+                <th className="border border-gray-200 px-4 py-2 text-center">
+                  Actions
+                </th>
               </tr>
             </thead>
+            <tbody>
+              {costs.map((cost, index) => (
+                <tr key={index} className="hover:bg-gray-50 transition">
+                  <td className="border border-gray-200 px-4 py-2 text-center">
+                    {cost.project?.projectId}
+                  </td>
+                  <td className="border border-gray-200 px-4 py-2 text-center">
+                    {cost.project?.projectName}
+                  </td>
+                  <td className="border border-gray-200 px-4 py-2 text-center">
+                    {cost.costId}
+                  </td>
+                  <td className="border border-gray-200 px-4 py-2 text-center">
+                    {editingId === cost._id ? (
+                      <input
+                        type="text"
+                        value={editedCost.costName}
+                        onChange={(e) =>
+                          setEditedCost({
+                            ...editedCost,
+                            costName: e.target.value,
+                          })
+                        }
+                        className="border p-1 text-center w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    ) : (
+                      cost.costName
+                    )}
+                  </td>
+                  <td className="border border-gray-200 px-4 py-2 text-center">
+                    {editingId === cost._id ? (
+                      <input
+                        type="number"
+                        value={editedCost.costAmount}
+                        onChange={(e) =>
+                          setEditedCost({
+                            ...editedCost,
+                            costAmount: e.target.value,
+                          })
+                        }
+                        onWheel={(e) => e.target.blur()}
+                        className="border p-1 text-center w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    ) : (
+                      `₹${cost.costAmount}`
+                    )}
+                  </td>
+                  <td className="border border-gray-200 px-4 py-2 text-center">
+                    <div className="flex flew-row">
+                      {editingId === cost._id ? (
+                        <button
+                          onClick={() => handleSave(cost._id)}
+                          className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 flex-1"
+                        >
+                          Save
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleEdit(cost)}
+                          className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 flex-1"
+                        >
+                          Edit
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDelete(cost._id)}
+                        className="bg-red-500 text-white px-3 py-1 rounded-md ml-2 hover:bg-red-600 flex-1"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>
