@@ -54,7 +54,9 @@ const ManagerPerformance = () => {
       );
 
       if (data.success) {
-        setEmployees(data.users);
+        // Filter employees whose role is "Manager"
+        const managers = data.users.filter((user) => user.role === "Manager");
+        setEmployees(managers); // Set only managers to state
       } else {
         toast.error(data.error);
       }
@@ -360,7 +362,9 @@ const ManagerPerformance = () => {
 
           <button
             className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600"
-            onClick={() => navigate("/manager-performance/employee-performances")}
+            onClick={() =>
+              navigate("/manager-performance/employee-performances")
+            }
           >
             Employee Performances
           </button>

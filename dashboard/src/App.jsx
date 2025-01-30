@@ -28,6 +28,9 @@ import ManagerEmployees from "./pages/Manager/ManagerEmployees.jsx";
 import ManagerEmployeeTasks from "./pages/Manager/ManagerEmployeeTasks.jsx";
 import ManagerEmployeePerformances from "./pages/Manager/ManagerEmployeePerformances.jsx";
 import ManagerCostLog from "./pages/Manager/ManagerCostLog.jsx";
+import EmployeeLogs from "./pages/Users/EmployeeLogs.jsx";
+import ManagerLogs from "./pages/Manager/ManagerLogs.jsx";
+import ManagerEmployeeLogs from "./pages/Manager/ManagerEmployeeLogs.jsx";
 
 const App = () => {
   const { atoken } = useContext(AdminContext);
@@ -41,30 +44,34 @@ const App = () => {
 
   return atoken || mtoken || token ? (
     <div className="flex flex-col min-h-screen">
-      <ToastContainer />
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex flex-1">
-        {/* Sidebar: Properly aligned */}
-        <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <div className="flex-1 ml-0 md:ml-64 pt-24 p-6">
-          {" "}
-          {/* Adjusted margin-left for sidebar width */}
+        {/* Sidebar: Adjusted for responsiveness */}
+        <Sidebar
+          isOpen={isSidebarOpen}
+          toggleSidebar={toggleSidebar}
+          className={`fixed inset-y-0 left-0 w-64 bg-gray-800 transform ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } md:relative md:translate-x-0 transition-transform duration-300`}
+        />
+
+        <div className="flex-1 pt-20 px-4 md:ml-64 lg:px-8">
+          <ToastContainer />
           <Routes>
             {/* Admin Routes */}
             <Route
               path="/"
               element={
-                <>
-                  <h2 className="text-xl font-semibold text-center mb-6 text-blue-500">
+                <div className="text-center">
+                  <h2 className="text-xl font-semibold mb-4 text-blue-500">
                     Welcome to the{" "}
                     {atoken ? "Admin" : mtoken ? "Manager" : "Employee"}{" "}
                     Dashboard!
                   </h2>
-
-                  <h3 className="text-lg font-semibold text-center mb-6 text-blue-500">
+                  <h3 className="text-lg font-semibold text-blue-500">
                     Please select an option to continue!
                   </h3>
-                </>
+                </div>
               }
             />
             <Route path="/admin-dashboard" element={<Dashboard />} />
@@ -83,20 +90,20 @@ const App = () => {
               path="/employee-performance"
               element={<EmployeePerformance />}
             />
+            <Route path="/employee-logs" element={<EmployeeLogs />} />
 
+            {/* Manager Routes */}
             <Route path="/manager-dashboard" element={<ManagerDashboard />} />
             <Route path="/manager-projects" element={<ManagerProjects />} />
             <Route
               path="/manager-projects/cost-log"
               element={<ManagerCostLog />}
             />
-
             <Route path="/manager-tasks" element={<ManagerTasks />} />
             <Route
               path="/manager-tasks/employee-tasks"
               element={<ManagerEmployeeTasks />}
             />
-
             <Route path="/manager-profile" element={<ManagerProfile />} />
             <Route
               path="/manager-performance"
@@ -107,6 +114,11 @@ const App = () => {
               element={<ManagerEmployeePerformances />}
             />
             <Route path="/manager-employees" element={<ManagerEmployees />} />
+            <Route path="/manager-logs" element={<ManagerLogs />} />
+            <Route
+              path="/manager-logs/employee-logs"
+              element={<ManagerEmployeeLogs />}
+            />
           </Routes>
         </div>
       </div>

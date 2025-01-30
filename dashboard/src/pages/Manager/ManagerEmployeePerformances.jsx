@@ -38,9 +38,15 @@ const ManagerEmployeePerformances = () => {
       );
 
       if (data.success) {
-        setPerformances(data.performances);
-        setFilteredPerformances(data.performances);
-      } else toast.error(data.error);
+        const filteredPerformances = data.performances.filter(
+          (performance) => performance.user.role === "User"
+        );
+
+        setPerformances(filteredPerformances);
+        setFilteredPerformances(filteredPerformances);
+      } else {
+        toast.error(data.error);
+      }
     } catch (error) {
       toast.error(error.message);
     }

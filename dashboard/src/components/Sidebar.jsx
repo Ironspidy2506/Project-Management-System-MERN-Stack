@@ -8,6 +8,7 @@ import { HiOutlineOfficeBuilding } from "react-icons/hi";
 import { FaUser, FaUsers } from "react-icons/fa6";
 import { UserContext } from "../context/UserContext.jsx";
 import { ManagerContext } from "../context/ManagerContext.jsx";
+import { LuLogs } from "react-icons/lu";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { atoken } = useContext(AdminContext);
@@ -142,7 +143,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               >
                 <GrDashboard className="text-lg" />
                 <span className="text-md">Dashboard</span>
-
               </NavLink>
               <NavLink
                 to="/manager-projects"
@@ -199,7 +199,25 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 onClick={toggleSidebar}
               >
                 <FaUsers className="text-lg" />
-                <span className="text-md">Employees</span>
+                <span class Name="text-md">
+                  Employees
+                </span>
+              </NavLink>
+              <NavLink
+                to="/manager-logs"
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 text-sm font-medium px-4 py-2 rounded-md transition ${
+                    isActive
+                      ? "bg-blue-100 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`
+                }
+                onClick={toggleSidebar}
+              >
+                <LuLogs className="text-lg" />
+                <span class Name="text-md">
+                  Logs
+                </span>
               </NavLink>
               <NavLink
                 to="/manager-profile"

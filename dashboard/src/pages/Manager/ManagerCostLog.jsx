@@ -8,6 +8,7 @@ const ManagerCostLog = () => {
   const [costs, setCosts] = useState([]);
   const [editingId, setEditingId] = useState(null);
   const [editedCost, setEditedCost] = useState({});
+  const [searchTerm, setSearchTerm] = useState(""); // New state for the search term
 
   useEffect(() => {
     if (mtoken) {
@@ -49,8 +50,6 @@ const ManagerCostLog = () => {
         { headers: { mtoken } }
       );
 
-      console.log();
-
       if (data.success) {
         toast.success(data.message);
         getCosts();
@@ -85,6 +84,18 @@ const ManagerCostLog = () => {
     }
   };
 
+  // Filter the costs based on the search term
+  const filteredCosts = costs.filter(
+    (cost) =>
+      cost.project?.projectId
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      cost.project?.projectName
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      cost.costId.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
       <div className="p-6">
@@ -95,8 +106,19 @@ const ManagerCostLog = () => {
           </h1>
         </header>
 
+        {/* Search Bar */}
+        <div className="mt-6 flex items-center">
+          <input
+            type="text"
+            placeholder="Search by Project ID, Name, or Cost ID"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border p-2 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
         {/* Project Table */}
-        <div className="mt-8 overflow-x-auto">
+        <div className="mt-4 overflow-x-auto">
           <table className="min-w-full border-collapse bg-white shadow rounded-lg overflow-hidden">
             <thead className="bg-blue-400 text-white">
               <tr>
@@ -121,7 +143,7 @@ const ManagerCostLog = () => {
               </tr>
             </thead>
             <tbody>
-              {costs.map((cost, index) => (
+              {filteredCosts.map((cost, index) => (
                 <tr key={index} className="hover:bg-gray-50 transition">
                   <td className="border border-gray-200 px-4 py-2 text-center">
                     {cost.project?.projectId}
