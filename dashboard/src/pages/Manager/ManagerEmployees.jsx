@@ -1,5 +1,5 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { toast } from "react-toastify";
 import { ManagerContext } from "../../context/ManagerContext.jsx";
 
@@ -18,9 +18,10 @@ const ManagerEmployee = () => {
   const [state, setState] = useState("Add");
   const [employees, setEmployees] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // Search state
   const { mtoken } = useContext(ManagerContext);
 
-  const roles = ["Admin", "Manager", "User"]; // Role options for dropdown
+  const roles = ["Admin", "Manager", "User"];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,9 +36,6 @@ const ManagerEmployee = () => {
           headers: { mtoken },
         }
       );
-
-      console.log(data);
-      
 
       if (data.success) {
         setEmployees(data.users);
@@ -55,124 +53,11 @@ const ManagerEmployee = () => {
     }
   }, [mtoken]);
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-
-    if (state === "Add") {
-      try {
-        const { data } = await axios.post(
-          `http://localhost:5000/api/user/add-user-manager`,
-          employeeDetails,
-          {
-            headers: { mtoken },
-          }
-        );
-
-        if (data.success) {
-          toast.success(data.message);
-          getEmployees();
-        } else {
-          toast.error(data.error);
-        }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    } else if (state === "Edit") {
-      try {
-        const { data } = await axios.post(
-          `http://localhost:5000/api/user/edit-user-manager/${employeeDetails._id}`,
-          employeeDetails,
-          {
-            headers: { mtoken },
-          }
-        );
-
-        if (data.success) {
-          toast.success(data.message);
-          getEmployees();
-        } else {
-          toast.error(data.error);
-        }
-      } catch (error) {
-        toast.error(error.message);
-      }
-    }
-
-    setState("Add");
-    setIsModalOpen(false);
-    setEmployeeDetails({
-      employeeId: "",
-      name: "",
-      email: "",
-      password: "",
-      phone: "",
-      department: "",
-      branch: "",
-      role: "User",
-    });
-  };
-
-  const handleDeleteEmployee = async (_id) => {
-    try {
-      const { data } = await axios.delete(
-        `http://localhost:5000/api/user/delete-user-manager/${_id}`,
-        {
-          headers: { mtoken },
-        }
-      );
-
-      console.log(data);
-      
-      if (data.success) {
-        toast.success(data.message);
-        getEmployees();
-      } else {
-        toast.error(data.error);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
-  const getDepartments = async () => {
-    try {
-      const { data } = await axios.get(
-        `http://localhost:5000/api/department/get-departments-manager`,
-        {
-          headers: { mtoken },
-        }
-      );
-
-      if (data.success) {
-        setDepartments(data.departments);
-      } else {
-        toast.error(data.error);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
-
-  useEffect(() => {
-    if (mtoken) {
-      getDepartments();
-    }
-  }, [mtoken]);
-
-  const handleEditButtonClick = (employee) => {
-    setEmployeeDetails({
-      _id: employee._id,
-      employeeId: employee.employeeId,
-      name: employee.name,
-      email: employee.email,
-      phone: employee.phone,
-      department: employee.department._id,
-      branch: employee.branch,
-      role: employee.role,
-    });
-    setState("Edit");
-    setIsModalOpen(true);
-  };
+  const filteredEmployees = employees.filter(
+    (employee) =>
+      employee.employeeId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      employee.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="p-6">
@@ -181,18 +66,29 @@ const ManagerEmployee = () => {
         <h1 className="text-2xl font-semibold text-gray-700">
           Employee Management
         </h1>
-        <div className="flex gap-2">
+        <div className="flex">
           <button
             onClick={() => setIsModalOpen(true)}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-          + Add Employee
+            + Add Employee
           </button>
         </div>
       </header>
 
+      {/* Search Bar */}
+      <div className="mt-4">
+        <input
+          type="text"
+          placeholder="Search by Employee ID or Name..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="px-4 py-2 w-full  border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
       {/* Employee List */}
-      <div className="mt-8">
+      <div className="mt-4">
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse bg-white shadow rounded-lg overflow-hidden">
             <thead>
@@ -221,32 +117,32 @@ const ManagerEmployee = () => {
               </tr>
             </thead>
             <tbody>
-              {employees.map((employee, index) => (
+              {filteredEmployees.map((employee, index) => (
                 <tr
                   key={employee._id}
                   className={`border-b ${
                     index % 2 === 0 ? "bg-gray-50" : "bg-white"
                   } hover:bg-gray-100`}
                 >
-                  <td className=" border px-6 py-4 text-sm text-center text-gray-500">
+                  <td className="border px-6 py-4 text-sm text-center text-gray-500">
                     {employee.employeeId}
                   </td>
-                  <td className=" border px-6 py-4 text-sm text-center text-gray-800">
+                  <td className="border px-6 py-4 text-sm text-center text-gray-800">
                     {employee.name}
                   </td>
-                  <td className=" border px-6 py-4 text-sm text-center text-gray-500">
+                  <td className="border px-6 py-4 text-sm text-center text-gray-500">
                     {employee.email}
                   </td>
-                  <td className=" border px-6 py-4 text-sm text-center text-gray-500">
+                  <td className="border px-6 py-4 text-sm text-center text-gray-500">
                     {employee.department.departmentName}
                   </td>
-                  <td className=" border px-6 py-4 text-sm text-center text-gray-500">
+                  <td className="border px-6 py-4 text-sm text-center text-gray-500">
                     {employee.role}
                   </td>
-                  <td className=" border px-6 py-4 text-sm text-center text-gray-500">
+                  <td className="border px-6 py-4 text-sm text-center text-gray-500">
                     {employee.phone}
                   </td>
-                  <td className=" border px-6 py-4 flex justify-center gap-2">
+                  <td className="border px-6 py-4 flex justify-center gap-2">
                     <button
                       onClick={() => handleEditButtonClick(employee)}
                       className="px-4 py-2 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600"
@@ -262,169 +158,17 @@ const ManagerEmployee = () => {
                   </td>
                 </tr>
               ))}
+              {filteredEmployees.length === 0 && (
+                <tr>
+                  <td colSpan="7" className="text-center py-4 text-gray-500">
+                    No employees found.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-xl p-6 rounded shadow-lg relative">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-5 text-gray-400 hover:text-gray-600 text-2xl font-bold"
-            >
-              &times;
-            </button>
-            <h2 className="text-center text-xl font-semibold mb-4">
-              {state === "Add" ? "Add New Employee" : "Edit Employee"}
-            </h2>
-
-            <form
-              onSubmit={handleFormSubmit}
-              className="space-y-4 max-h-[80vh] overflow-y-auto p-5"
-            >
-              {/* Employee ID */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">
-                  Employee ID
-                </label>
-                <input
-                  type="text"
-                  name="employeeId"
-                  value={employeeDetails.employeeId}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter employee ID"
-                  required
-                />
-              </div>
-
-              {/* Name */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={employeeDetails.name}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter employee name"
-                  required
-                />
-              </div>
-
-              {/* Email */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={employeeDetails.email}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter email address"
-                  required
-                />
-              </div>
-
-              {/* Password */}
-              {state === "Add" && (
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={employeeDetails.password}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Enter password"
-                    required
-                  />
-                </div>
-              )}
-
-              {/* Phone */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Phone</label>
-                <input
-                  type="text"
-                  name="phone"
-                  value={employeeDetails.phone}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter phone number"
-                />
-              </div>
-
-              {/* Department */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">
-                  Department
-                </label>
-                <select
-                  name="department"
-                  value={employeeDetails.department}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                >
-                  <option value="">Select Department</option>
-                  {departments.map((dept) => (
-                    <option key={dept._id} value={dept._id}>
-                      {dept.departmentName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Branch */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Branch</label>
-                <input
-                  type="text"
-                  name="branch"
-                  value={employeeDetails.branch}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter branch"
-                  required
-                />
-              </div>
-
-              {/* Role */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Role</label>
-                <select
-                  name="role"
-                  value={employeeDetails.role}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {roles.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Submit Button */}
-              <div className="text-center">
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  {state === "Add" ? "Add Employee" : "Update Employee"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

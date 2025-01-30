@@ -52,7 +52,10 @@ const EmployeePerformance = () => {
       );
 
       if (data.success) {
-        setEmployees(data.users);
+        const filteredUsers = data.users.filter(
+          (user) => user.role === "Manager"
+        );
+        setEmployees(filteredUsers);
       } else {
         toast.error(data.error);
       }

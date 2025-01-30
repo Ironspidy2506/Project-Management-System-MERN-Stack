@@ -391,6 +391,90 @@ const ManagerProjects = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modal for Adding Cost */}
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl">
+            <h2 className="text-xl font-bold mb-4 text-center">Add Cost</h2>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                Select Project
+              </label>
+              <select
+                value={selectedProject}
+                onChange={handleProjectChange} // Use the function that updates costId
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">Select a project</option>
+                {projects.map((project) => (
+                  <option key={project._id} value={project._id}>
+                    {project.projectId} - {project.projectName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                Cost ID
+              </label>
+              <input
+                type="text"
+                value={costId}
+                onChange={(e) => setCostId(e.target.value)}
+                disabled
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Cost ID"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                Cost Name
+              </label>
+              <input
+                type="text"
+                value={costName}
+                onChange={(e) => setCostName(e.target.value)}
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter cost name"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                Cost Amount
+              </label>
+              <input
+                type="number"
+                value={costAmount}
+                onChange={(e) => setCostAmount(e.target.value)}
+                onWheel={(e) => e.target.blur()}
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter cost amount"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleAddCost}
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full"
+              >
+                Add Cost
+              </button>
+              <button
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setSelectedProject("");
+                  setCostId("");
+                  setCostName("");
+                  setCostAmount("");
+                }}
+                className="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400 w-full"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

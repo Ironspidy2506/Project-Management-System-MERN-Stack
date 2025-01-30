@@ -199,7 +199,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 onClick={toggleSidebar}
               >
                 <FaUsers className="text-lg" />
-                <span class Name="text-md">
+                <span className="text-md">
                   Employees
                 </span>
               </NavLink>
@@ -215,7 +215,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 onClick={toggleSidebar}
               >
                 <LuLogs className="text-lg" />
-                <span class Name="text-md">
+                <span className="text-md">
                   Logs
                 </span>
               </NavLink>
@@ -295,6 +295,22 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               >
                 <FaChartLine className="text-lg" />
                 <span className="text-md">My Performance</span>
+              </NavLink>
+              <NavLink
+                to="/employee-logs"
+                className={({ isActive }) =>
+                  `flex items-center space-x-3 text-sm font-medium px-4 py-2 rounded-md transition ${
+                    isActive
+                      ? "bg-blue-100 text-blue-600"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`
+                }
+                onClick={toggleSidebar}
+              >
+                <LuLogs className="text-lg" />
+                <span className="text-md">
+                  My Logs
+                </span>
               </NavLink>
               <NavLink
                 to="/employee-profile"
