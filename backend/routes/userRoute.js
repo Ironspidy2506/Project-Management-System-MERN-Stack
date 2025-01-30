@@ -12,6 +12,7 @@ import editUser, {
 } from "../controllers/userController.js";
 import authUser from "../middlewares/authUser.js";
 import { getAllEmployeesPerformancesForManager } from "../controllers/managerController.js";
+import { getUserProjectLogs } from "../controllers/projectLogController.js";
 
 const userRouter = express.Router();
 
@@ -24,6 +25,8 @@ userRouter.get("/get-my-tasks", authUser, getUserTasks);
 userRouter.get("/get-my-performances", authUser, getUserPerformances);
 
 userRouter.get("/get-my-profile", authUser, getUserProfile);
+
+userRouter.get("/get-my-project-logs", authUser, getUserProjectLogs);
 
 userRouter.get("/get-users", authAdmin, getUsers);
 
@@ -43,6 +46,10 @@ userRouter.delete("/delete-user/:_id", authAdmin, deleteUser);
 
 userRouter.delete("/delete-user-manager/:_id", authUser, deleteUser);
 
-userRouter.get('/get-employees-performances-for-manager', authUser, getAllEmployeesPerformancesForManager)
+userRouter.get(
+  "/get-employees-performances-for-manager",
+  authUser,
+  getAllEmployeesPerformancesForManager
+);
 
 export default userRouter;

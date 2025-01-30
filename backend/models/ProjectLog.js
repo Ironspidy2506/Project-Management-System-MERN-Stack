@@ -19,6 +19,10 @@ const projectLogSchema = new mongoose.Schema(
     totalTime: {
       type: Number,
     },
+    added: {
+      type: Boolean,
+      default: false,
+    }
   },
   {
     timestamps: true,
