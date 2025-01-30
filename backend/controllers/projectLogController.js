@@ -116,8 +116,6 @@ const addProjectLog = async (req, res) => {
     const { projectId, userId, startDate, startTime, endDate, endTime } =
       req.body;
 
-    console.log({ startDate, startTime, endDate, endTime });
-
     if (
       !projectId ||
       !userId ||
