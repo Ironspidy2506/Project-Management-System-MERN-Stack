@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { UserContext } from "../context/UserContext.jsx";
 import { ManagerContext } from "../context/ManagerContext.jsx";
+import KorusImg from "../assets/Korus.png";
 
 const Login = () => {
   const [state, setState] = useState("User");
@@ -63,13 +64,24 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center min-h-screen">
       <form
-        className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md"
+        className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md flex flex-col items-center"
         onSubmit={onSubmitHandler}
       >
+        {/* Logo and Company Name */}
+        <img
+          src={KorusImg}
+          alt="Korus Engineering Solutions"
+          className="mb-4 w-14 h-14"
+        />
+        <h2 className="text-xl font-bold text-gray-800 text-center mb-4">
+          Korus Engineering Solutions Pvt. Ltd.
+        </h2>
+
+        {/* Login Form */}
         <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
           {state} Login
         </h2>
-        <div className="mb-4">
+        <div className="mb-4 w-full">
           <label
             htmlFor="email"
             className="block text-gray-700 font-medium mb-2"
@@ -85,7 +97,7 @@ const Login = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition duration-200"
           />
         </div>
-        <div className="mb-6">
+        <div className="mb-6 w-full">
           <label
             htmlFor="password"
             className="block text-gray-700 font-medium mb-2"
