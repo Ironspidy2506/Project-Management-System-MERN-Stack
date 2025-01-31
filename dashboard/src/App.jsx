@@ -31,6 +31,8 @@ import ManagerCostLog from "./pages/Manager/ManagerCostLog.jsx";
 import EmployeeLogs from "./pages/Users/EmployeeLogs.jsx";
 import ManagerLogs from "./pages/Manager/ManagerLogs.jsx";
 import ManagerEmployeeLogs from "./pages/Manager/ManagerEmployeeLogs.jsx";
+import CostLogs from "./pages/Admin/CostLogs.jsx";
+import Logs from "./pages/Admin/Logs.jsx";
 
 const App = () => {
   const { atoken } = useContext(AdminContext);
@@ -62,7 +64,7 @@ const App = () => {
             <Route
               path="/"
               element={
-                <div className="text-center">
+                <div className="text-center mt-5">
                   <h2 className="text-xl font-semibold mb-4 text-blue-500">
                     Welcome to the{" "}
                     {atoken ? "Admin" : mtoken ? "Manager" : "Employee"}{" "}
@@ -80,6 +82,8 @@ const App = () => {
             <Route path="/performance" element={<Performance />} />
             <Route path="/departments" element={<Department />} />
             <Route path="/employees" element={<Employee />} />
+            <Route path="/logs" element={<Logs />} />
+            <Route path="/projects/costs-log" element={<CostLogs />} />
 
             {/* Employee Routes */}
             <Route path="/employee-dashboard" element={<EmployeeDashboard />} />

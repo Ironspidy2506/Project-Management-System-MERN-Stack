@@ -1,131 +1,213 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect, useContext, useState } from "react";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { FaChartLine, FaTasks, FaUsers } from "react-icons/fa";
+import { MdDashboard } from "react-icons/md";
+import { HiOutlineOfficeBuilding } from "react-icons/hi";
+import { LuLogs } from "react-icons/lu";
 import { AdminContext } from "../../context/AdminContext.jsx";
 
 const Dashboard = () => {
-  const { atoken, getDashboard, cancelAppointment, dashData } =
-    useContext(AdminContext);
+  const { atoken } = useContext(AdminContext);
+  const [projects, setProjects] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [performances, setPerformances] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [projectLogs, setProjectLogs] = useState([]);
+
+  const getProjects = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/projects/get-projects`,
+        { headers: { atoken } }
+      );
+      if (data.success) {
+        setProjects(data.projects);
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const getTasks = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/tasks/get-tasks`,
+        { headers: { atoken } }
+      );
+      if (data.success) setTasks(data.tasks);
+      else toast.error(data.error);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const getEmployees = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/user/get-users`,
+        { headers: { atoken } }
+      );
+      if (data.success) {
+        setEmployees(data.users);
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const getPerformances = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/performances/get-performances`,
+        { headers: { atoken } }
+      );
+      if (data.success) {
+        setPerformances(data.performances);
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const getDepartments = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/department/get-departments`,
+        { headers: { atoken } }
+      );
+      if (data.success) {
+        setDepartments(data.departments);
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const getLogs = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/project-log/get-logs`,
+        { headers: { atoken } }
+      );
+      if (data.success) {
+        setProjectLogs(data.logs);
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   useEffect(() => {
     if (atoken) {
-      getDashboard();
+      getProjects();
+      getEmployees();
+      getTasks();
+      getPerformances();
+      getDepartments();
+      getLogs();
     }
   }, [atoken]);
 
   return (
-    dashData && (
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold text-center mb-8 text-blue-500">
-          Admin Dashboard
-        </h1>
+    <div className="p-6">
+      {/* Header */}
+      <header className="flex justify-center items-center bg-white shadow p-5 rounded-md mb-6">
+        <h1 className="text-2xl font-semibold text-gray-700">Dashboard</h1>
+      </header>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Doctors */}
-          <div className="flex items-center bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition-shadow">
-            <div className="w-16 h-16 flex items-center justify-center bg-blue-100 rounded-full">
-              <img
-                // src={assets.doctor_icon}
-                alt="Doctors"
-                className="w-10 h-10"
-              />
-            </div>
-            <div className="ml-4">
-              <p className="text-gray-500 font-medium">Doctors</p>
-              <p className="text-2xl font-bold text-gray-800">
-                {dashData.doctors}
-              </p>
-            </div>
+      {/* Responsive Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Projects */}
+        <div className="flex items-center bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 flex items-center justify-center bg-blue-200 rounded-full">
+            <MdDashboard className="text-2xl text-gray-700" />
           </div>
-
-          {/* Patients */}
-          <div className="flex items-center bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition-shadow">
-            <div className="w-16 h-16 flex items-center justify-center bg-green-100 rounded-full">
-              <img
-                // src={assets.patients_icon}
-                alt="Patients"
-                className="w-10 h-10"
-              />
-            </div>
-            <div className="ml-4">
-              <p className="text-gray-500 font-medium">Patients</p>
-              <p className="text-2xl font-bold text-gray-800">
-                {dashData.patients}
-              </p>
-            </div>
-          </div>
-
-          {/* Appointments */}
-          <div className="flex items-center bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition-shadow">
-            <div className="w-16 h-16 flex items-center justify-center bg-yellow-100 rounded-full">
-              <img
-                // src={assets.appointments_icon}
-                alt="Appointments"
-                className="w-10 h-10"
-              />
-            </div>
-            <div className="ml-4">
-              <p className="text-gray-500 font-medium">Appointments</p>
-              <p className="text-2xl font-bold text-gray-800">
-                {dashData.appointments}
-              </p>
-            </div>
+          <div className="ml-6 flex flex-row gap-1.5 justify-center items-center">
+            <p className="text-xl font-extrabold text-gray-600">
+              {projects.length}
+            </p>
+            <p className="text-xl font-bold text-gray-600">Projects</p>
           </div>
         </div>
 
-        <div className="bg-white p-6 shadow-md rounded-lg">
-          <div className="flex items-center gap-2 mb-4">
-            {/* <img src={assets.list_icon} alt="" /> */}
-            <h2 className="flex justify-center items-center text-xl font-semibold text-gray-700">
-              Latest Appointments
-            </h2>
+        {/* Employees */}
+        <div className="flex items-center bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 flex items-center justify-center bg-purple-200 rounded-full">
+            <FaUsers className="text-xl text-gray-700" />
           </div>
-          <ul className="space-y-4">
-            {dashData?.latestAppointments?.length > 0 ? (
-              dashData.latestAppointments.map((appointment, index) => (
-                <li
-                  key={index}
-                  className="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm hover:bg-gray-100 transition"
-                >
-                  <div className="w-12 h-12 flex-shrink-0">
-                    <img
-                      src={
-                        appointment.docData?.image ||
-                        "path/to/default-image.jpg"
-                      }
-                      alt={appointment.docData?.name || "Unknown user"}
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  </div>
-                  <div className="ml-4 flex-1">
-                    <p className="font-medium text-gray-700">
-                      {appointment.docData?.name || "Unknown Doctor"}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {appointment.slotDate || "NA"} -{" "}
-                      {appointment.slotTime || "NA"} -{" Patient Name - "}
-                      {appointment.userData?.name || "Unknown User"}
-                    </p>
-                  </div>
-                  {appointment.cancelled ? (
-                    <p className="text-red-500 text-center font-semibold">
-                      Cancelled
-                    </p>
-                  ) : (
-                    <img
-                      // src={assets.cancel_icon}
-                      alt="cancel"
-                      className="w-10 h-10 cursor-pointer"
-                      onClick={() => cancelAppointment(appointment._id)}
-                    />
-                  )}
-                </li>
-              ))
-            ) : (
-              <p>No appointments available.</p>
-            )}
-          </ul>
+          <div className="ml-6 flex flex-row gap-1.5 justify-center items-center">
+            <p className="text-xl font-extrabold text-gray-600">
+              {employees.length}
+            </p>
+            <p className="text-xl font-bold text-gray-600">Employees</p>
+          </div>
+        </div>
+
+        {/* Departments */}
+        <div className="flex items-center bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 flex items-center justify-center bg-green-200 rounded-full">
+            <HiOutlineOfficeBuilding className="text-2xl text-gray-700" />
+          </div>
+          <div className="ml-6 flex flex-row gap-1.5 justify-center items-center">
+            <p className="text-xl font-extrabold text-gray-600">
+              {departments.length}
+            </p>
+            <p className="text-xl font-bold text-gray-600">Departments</p>
+          </div>
+        </div>
+
+        {/* Tasks */}
+        <div className="flex items-center bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 flex items-center justify-center bg-red-200 rounded-full">
+            <FaTasks className="text-xl text-gray-700" />
+          </div>
+          <div className="ml-6 flex flex-row gap-1.5 justify-center items-center">
+            <p className="text-xl font-extrabold text-gray-600">
+              {tasks.length}
+            </p>
+            <p className="text-xl font-bold text-gray-600">Tasks</p>
+          </div>
+        </div>
+
+        {/* Performances */}
+        <div className="flex items-center bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 flex items-center justify-center bg-yellow-200 rounded-full">
+            <FaChartLine className="text-xl text-gray-700" />
+          </div>
+          <div className="ml-6 flex flex-row gap-1.5 justify-center items-center">
+            <p className="text-xl font-extrabold text-gray-600">
+              {performances.length}
+            </p>
+            <p className="text-xl font-bold text-gray-600">Performances</p>
+          </div>
+        </div>
+
+        {/* Logs */}
+        <div className="flex items-center bg-white p-6 shadow-md rounded-lg hover:shadow-lg transition-shadow">
+          <div className="w-16 h-16 flex items-center justify-center bg-orange-200 rounded-full">
+            <LuLogs className="text-xl text-gray-700" />
+          </div>
+          <div className="ml-6 flex flex-row gap-1.5 justify-center items-center">
+            <p className="text-xl font-extrabold text-gray-600">
+              {projectLogs.length}
+            </p>
+            <p className="text-xl font-bold text-gray-600">Logs</p>
+          </div>
         </div>
       </div>
-    )
+    </div>
   );
 };
 

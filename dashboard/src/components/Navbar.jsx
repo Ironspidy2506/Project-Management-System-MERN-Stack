@@ -56,15 +56,6 @@ const Navbar = ({ toggleSidebar }) => {
           <h1 className="text-xl font-bold text-gray-700">
             Korus Engineering Solutions Pvt. Ltd.
           </h1>
-
-          {atoken ? (
-            <span className="text-white textlg font-bold bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2 rounded-full shadow-md">
-              {" "}
-              Admin{" "}
-            </span>
-          ) : (
-            <></>
-          )}
         </div>
 
         {/* Logout Button */}

@@ -2,9 +2,12 @@ import React, { useState, useEffect, useContext } from "react";
 import { AdminContext } from "../../context/AdminContext.jsx";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Project = () => {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCostModalOpen, setIsCostModalOpen] = useState(false);
   const [state, setState] = useState("Add");
   const [projectDetails, setProjectDetails] = useState({
     name: "",
@@ -21,7 +24,12 @@ const Project = () => {
     assignedResources: [],
   });
 
+  const [selectedCostProject, setSelectedCostProject] = useState("");
+  const [costId, setCostId] = useState("");
+  const [costName, setCostName] = useState("");
+  const [costAmount, setCostAmount] = useState("");
   const [projects, setProjects] = useState([]);
+  const [costs, setCosts] = useState([]);
   const [employees, setEmployees] = useState([]);
   const { atoken } = useContext(AdminContext);
 
@@ -141,22 +149,18 @@ const Project = () => {
   };
 
   const handleEditButtonClick = (project) => {
-    // Get the assigned manager objects
     const assignedManager = employees.filter((emp) =>
       project.assignedManager?.some((empId) => emp._id === empId)
     );
 
-    // Get the assigned team leads objects
     const assignedTeamLeads = employees.filter((emp) =>
       project.assignedTeamLeads?.some((empId) => emp._id === empId)
     );
 
-    // Get the assigned resources objects
     const assignedResources = employees.filter((emp) =>
       project.assignedResources?.some((empId) => emp._id === empId)
     );
 
-    // Set project details for editing, passing the full employee objects
     setProjectDetails({
       _id: project._id,
       name: project.name,
@@ -168,12 +172,11 @@ const Project = () => {
       remark: project.remark,
       estimatedCost: project.estimatedCost,
       estimatedHours: project.estimatedHours,
-      assignedManager, // Now it's the full objects
-      assignedTeamLeads, // Now it's the full objects
-      assignedResources, // Now it's the full objects
+      assignedManager,
+      assignedTeamLeads,
+      assignedResources,
     });
 
-    // Change state to 'Edit' and open the modal
     setState("Edit");
     setIsModalOpen(true);
   };
@@ -182,6 +185,7 @@ const Project = () => {
     if (atoken) {
       getProjects();
       getEmployees();
+      getCosts();
     }
   }, [atoken]);
 
@@ -190,7 +194,6 @@ const Project = () => {
     setProjectDetails({ ...projectDetails, [name]: value });
   };
 
-  // For Select Input (assignedManager, assignedTeamLeads, assignedResources)
   const handleSelectChange = (e, field) => {
     const selectedId = e.target.value;
     const selectedEmployee = employees.find((emp) => emp._id === selectedId);
@@ -206,7 +209,6 @@ const Project = () => {
     }
   };
 
-  // Remove selected items from assigned fields
   const handleRemoveEmployee = (field, employee) => {
     setProjectDetails((prev) => ({
       ...prev,
@@ -218,7 +220,6 @@ const Project = () => {
   const [modalType, setModalType] = useState("");
 
   const handleViewDetails = (project, type) => {
-    // Map the employee details (name, employeeId) for each role
     const assignedManagerDetails = project.assignedManager.map((empId) => {
       const employee = employees.find((emp) => emp._id === empId);
       return { name: employee?.name, employeeId: employee?.employeeId };
@@ -234,7 +235,6 @@ const Project = () => {
       return { name: employee?.name, employeeId: employee?.employeeId };
     });
 
-    // Update the selected project with employee details
     setSelectedProject({
       ...project,
       assignedManagerDetails,
@@ -250,6 +250,77 @@ const Project = () => {
     setModalType("");
   };
 
+  const getCosts = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:5000/api/cost/get-costs`,
+        {
+          headers: { atoken },
+        }
+      );
+
+      if (data.success) {
+        setCosts(data.costs);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "An unexpected error occurred."
+      );
+    }
+  };
+
+  const handleCostProjectChange = (e) => {
+    const projectId = e.target.value;
+    setSelectedCostProject(projectId);
+
+    const project = projects.find((proj) => proj._id === projectId);
+
+    if (!project) {
+      toast.error("Project not found!");
+      return;
+    }
+
+    const projectCosts = costs.filter((cost) => cost.project._id === projectId);
+    const nextCostIndex = projectCosts.length + 1;
+
+    setCostId(`C_${project.projectId}_${nextCostIndex}`);
+  };
+
+  const handleAddCost = async () => {
+    try {
+      if (!selectedCostProject || !costId || !costName || !costAmount) {
+        toast.error("Please fill all fields!");
+        return;
+      }
+
+      const { data } = await axios.post(
+        `http://localhost:5000/api/cost/add-cost`,
+        { projectId: selectedCostProject, costId, costName, costAmount },
+        {
+          headers: { atoken },
+        }
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        setIsCostModalOpen(false);
+        setSelectedCostProject("");
+        setCostId("");
+        setCostName("");
+        setCostAmount("");
+        getProjects();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "An unexpected error occurred."
+      );
+    }
+  };
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -257,15 +328,32 @@ const Project = () => {
         <h1 className="text-2xl font-semibold text-gray-700">
           Project Management
         </h1>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
+          {/* Add Project */}
           <button
             onClick={() => {
               resetForm(); // Reset the form before opening the modal
               setIsModalOpen(true);
             }}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all"
           >
-            Add Project
+            + Add Project
+          </button>
+
+          {/* Add Cost */}
+          <button
+            className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition-all"
+            onClick={() => setIsCostModalOpen(true)}
+          >
+            + Add Cost
+          </button>
+
+          {/* Cost Log */}
+          <button
+            className="px-6 py-2 bg-purple-500 text-white font-semibold rounded-lg shadow-md hover:bg-purple-600 transition-all"
+            onClick={() => navigate(`/projects/costs-log`)}
+          >
+            Cost Log
           </button>
         </div>
       </header>
@@ -711,6 +799,90 @@ const Project = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for Adding Cost */}
+      {isCostModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl">
+            <h2 className="text-xl font-bold mb-4 text-center">Add Cost</h2>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                Select Project
+              </label>
+              <select
+                value={selectedCostProject}
+                onChange={handleCostProjectChange} // Use the function that updates costId
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">Select a project</option>
+                {projects.map((project) => (
+                  <option key={project._id} value={project._id}>
+                    {project.projectId} - {project.projectName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                Cost ID
+              </label>
+              <input
+                type="text"
+                value={costId}
+                onChange={(e) => setCostId(e.target.value)}
+                disabled
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Cost ID"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                Cost Name
+              </label>
+              <input
+                type="text"
+                value={costName}
+                onChange={(e) => setCostName(e.target.value)}
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter cost name"
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                Cost Amount
+              </label>
+              <input
+                type="number"
+                value={costAmount}
+                onChange={(e) => setCostAmount(e.target.value)}
+                onWheel={(e) => e.target.blur()}
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter cost amount"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleAddCost}
+                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 w-full"
+              >
+                Add Cost
+              </button>
+              <button
+                onClick={() => {
+                  setIsCostModalOpen(false);
+                  setSelectedProject("");
+                  setCostId("");
+                  setCostName("");
+                  setCostAmount("");
+                }}
+                className="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400 w-full"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}

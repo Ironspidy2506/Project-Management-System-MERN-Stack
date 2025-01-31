@@ -14,6 +14,7 @@ const Department = () => {
   const [state, setState] = useState("Add");
   const [departments, setDepartments] = useState([]);
   const { atoken } = useContext(AdminContext);
+  const [searchQuery, setSearchQuery] = useState(""); // State for search input
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -136,6 +137,16 @@ const Department = () => {
     setIsModalOpen(true);
   };
 
+  const filteredDepartments = departments.filter(
+    (department) =>
+      department.departmentId
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      department.departmentName
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -148,13 +159,24 @@ const Department = () => {
             onClick={() => setIsModalOpen(true)}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Add Department
+            + Add Department
           </button>
         </div>
       </header>
 
+      {/* Search Input */}
+      <div className="mt-4">
+        <input
+          type="text"
+          placeholder="Search by Department ID or Name"
+          className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
       {/* Department List */}
-      <div className="mt-8">
+      <div className="mt-4">
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse bg-white shadow rounded-lg overflow-hidden">
             <thead>
@@ -174,7 +196,7 @@ const Department = () => {
               </tr>
             </thead>
             <tbody>
-              {departments.map((department, index) => (
+              {filteredDepartments.map((department, index) => (
                 <tr
                   key={department._id}
                   className={`border-b ${
