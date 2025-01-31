@@ -5,13 +5,17 @@ import {
   deleteProjectLog,
   editProjectLog,
   endProject,
+  getAllLogs,
   getDateWiseProjectLogUser,
   getEmployeeProjectLogs,
   getMonthWiseProjectLogUser,
   startProject,
 } from "../controllers/projectLogController.js";
+import authAdmin from "../middlewares/authAdmin.js";
 
 const projectLogRouter = express.Router();
+
+projectLogRouter.get("/get-logs", authAdmin, getAllLogs)
 
 projectLogRouter.post("/start-project", authUser, startProject);
 

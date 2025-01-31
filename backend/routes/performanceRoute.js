@@ -4,6 +4,7 @@ import {
   addPerformance,
   deletePerformance,
   editPerformance,
+  getAllPerformances,
   getDateWisePerformanceUser,
   getMonthWisePerformanceUser,
 } from "../controllers/performanceController.js";
@@ -13,8 +14,17 @@ import {
   getEmployeeWisePerformancesManager,
   getMonthWisePerformanceUserManager,
 } from "../controllers/managerController.js";
+import authAdmin from "../middlewares/authAdmin.js";
 
 const performanceRouter = express.Router();
+
+performanceRouter.get("/get-performances", authAdmin, getAllPerformances);
+
+performanceRouter.post(
+  "/change-status/:performanceId",
+  authAdmin,
+  changeStatusOfPerformance
+);
 
 performanceRouter.post(
   "/change-status-manager/:performanceId",

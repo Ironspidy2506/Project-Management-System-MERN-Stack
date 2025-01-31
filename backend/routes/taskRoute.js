@@ -5,6 +5,7 @@ import {
   completeTask,
   deleteTask,
   editTask,
+  getAllTasks,
   getDateWiseTaskUser,
   getMonthWiseTaskUser,
 } from "../controllers/taskController.js";
@@ -14,16 +15,27 @@ import {
   getManagerAssignedTasks,
   getMonthWiseTaskUserManager,
 } from "../controllers/managerController.js";
+import authAdmin from "../middlewares/authAdmin.js";
 
 const taskRouter = express.Router();
 
+taskRouter.get("/get-tasks", authAdmin, getAllTasks);
+
 taskRouter.post("/add-task", authUser, addTask);
+
+taskRouter.post("/add-task-admin", authAdmin, addTask);
 
 taskRouter.post("/edit-task/:_id", authUser, editTask);
 
+taskRouter.post("/edit-task-admin/:_id", authAdmin, editTask);
+
 taskRouter.delete("/delete-task/:_id", authUser, deleteTask);
 
+taskRouter.delete("/delete-task-admin/:_id", authAdmin, deleteTask);
+
 taskRouter.post("/complete-task/:_id", authUser, completeTask);
+
+taskRouter.post("/complete-task-admin/:_id", authAdmin, completeTask);
 
 taskRouter.get("/get-date-wise/:date", authUser, getDateWiseTaskUser);
 

@@ -3,6 +3,24 @@ import ProjectLog from "../models/ProjectLog.js";
 import User from "../models/Users.js";
 import Project from "../models/Project.js";
 
+const getAllLogs = async (req, res) => {
+  try {
+    const logs = await ProjectLog.find({}).populate("project user");
+
+    return res.json({
+      success: true,
+      message: "Logs data fetched successfully",
+      logs,
+    });
+  } catch (error) {
+    console.error("Error fetching project logs:", error);
+    return res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const startProject = async (req, res) => {
   try {
     const { userId, projectId, projectPassword, startDate, startTime } =
@@ -340,6 +358,7 @@ const getEmployeeProjectLogs = async (req, res) => {
 };
 
 export {
+  getAllLogs,
   startProject,
   endProject,
   getUserProjectLogs,

@@ -2,6 +2,26 @@ import Performance from "../models/Performance.js";
 import User from "../models/Users.js";
 import Project from "../models/Project.js";
 
+// API to get all performances
+const getAllPerformances = async (req, res) => {
+  try {
+    const performances = await Performance.find({}).populate(
+      "project user drawingReleased"
+    );
+
+    return res.json({
+      success: true,
+      message: "Performances data fetched successfully",
+      performances,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // API to add performance for user
 const addPerformance = async (req, res) => {
   try {
@@ -115,11 +135,11 @@ const getDateWisePerformanceUser = async (req, res) => {
 
     const performances = await Performance.find({
       user: userId,
-      date
-    }).populate("drawingReleased")
-    .populate("project")
-    .populate("user");
-
+      date,
+    })
+      .populate("drawingReleased")
+      .populate("project")
+      .populate("user");
 
     return res.json({
       success: true,
@@ -135,49 +155,49 @@ const getDateWisePerformanceUser = async (req, res) => {
 };
 
 const getMonthWisePerformanceUser = async (req, res) => {
-    try {
-      const { userId } = req.body;
-      const { month, year } = req.params;
-  
-      if (!month || !year) {
-        return res.json({
-          success: false,
-          message: "Month and Year are required",
-        });
-      }
-  
-      const monthNumber = parseInt(month, 10) - 1;
-      const yearNumber = parseInt(year, 10);
-  
-      const startDate = new Date(yearNumber, monthNumber, 1);
-      const endDate = new Date(yearNumber, monthNumber + 1, 1);
-  
-      const performances = await Performance.find({
-        user: userId,
-        date: {
-          $gte: startDate,
-          $lt: endDate,
-        },
-      })
-        .populate("drawingReleased")
-        .populate("project")
-        .populate("user");
-  
-      res.json({
-        success: true,
-        message: `Performances fetched successfully`,
-        performances,
-      });
-    } catch (error) {
-      res.json({
+  try {
+    const { userId } = req.body;
+    const { month, year } = req.params;
+
+    if (!month || !year) {
+      return res.json({
         success: false,
-        message: error.message,
+        message: "Month and Year are required",
       });
     }
-  };
-  
+
+    const monthNumber = parseInt(month, 10) - 1;
+    const yearNumber = parseInt(year, 10);
+
+    const startDate = new Date(yearNumber, monthNumber, 1);
+    const endDate = new Date(yearNumber, monthNumber + 1, 1);
+
+    const performances = await Performance.find({
+      user: userId,
+      date: {
+        $gte: startDate,
+        $lt: endDate,
+      },
+    })
+      .populate("drawingReleased")
+      .populate("project")
+      .populate("user");
+
+    res.json({
+      success: true,
+      message: `Performances fetched successfully`,
+      performances,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 export {
+  getAllPerformances,
   addPerformance,
   editPerformance,
   deletePerformance,

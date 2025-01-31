@@ -2,6 +2,21 @@ import Cost from "../models/Costs.js";
 import Project from "../models/Project.js";
 import User from "../models/Users.js";
 
+const getAllCosts = async (req, res) => {
+  try {
+    const costs = await Cost.find({}).populate("project addedBy");
+
+    return res.json({
+      success: true,
+      message: "Costs data fetched successfully",
+      costs,
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
 const addCost = async (req, res) => {
   try {
     const { projectId, userId, costId, costName, costAmount } = req.body;
@@ -14,7 +29,7 @@ const addCost = async (req, res) => {
       costId,
       costName,
       costAmount,
-      addedBy: user._id,
+      ...(user?._id && { addedBy: user._id }),
     });
 
     await newCost.save();
@@ -108,4 +123,4 @@ const getCostsAddedByManager = async (req, res) => {
   }
 };
 
-export { addCost, editCost, deleteCost, getCostsAddedByManager };
+export { getAllCosts, addCost, editCost, deleteCost, getCostsAddedByManager };

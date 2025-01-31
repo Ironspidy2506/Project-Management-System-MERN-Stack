@@ -2,6 +2,24 @@ import Task from "../models/Tasks.js";
 import User from "../models/Users.js";
 import Project from "../models/Project.js";
 
+// API to get all tasks
+const getAllTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find({}).populate("project user");
+
+    return res.json({
+      success: true,
+      message: "Tasks data fetched successfully",
+      tasks,
+    });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // API to Add the task
 const addTask = async (req, res) => {
   try {
@@ -23,12 +41,15 @@ const addTask = async (req, res) => {
       });
     }
 
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.json({
-        success: false,
-        message: "User not found",
-      });
+    let user = null;
+    if (userId) {
+      user = await User.findById(userId);
+      if (!user) {
+        return res.json({
+          success: false,
+          message: "User not found",
+        });
+      }
     }
 
     const project = await Project.findById(projectId);
@@ -38,39 +59,29 @@ const addTask = async (req, res) => {
         message: "Project not found",
       });
     }
+
+    let assignedUser = null;
     if (assignedEmployee) {
-      const employee = await User.findById(assignedEmployee);
-      if (!employee) {
+      assignedUser = await User.findById(assignedEmployee);
+      if (!assignedUser) {
         return res.json({
           success: false,
-          message: "User not found",
+          message: "Assigned employee not found",
         });
       }
-
-      const newTask = new Task({
-        taskId,
-        project: project._id,
-        user: employee._id,
-        task,
-        startDate,
-        dueDate,
-        assignedBy: user._id,
-      });
-
-      await newTask.save();
-    } else {
-      const newTask = new Task({
-        taskId,
-        project: project._id,
-        user: user._id,
-        task,
-        startDate,
-        dueDate,
-        added: true,
-      });
-
-      await newTask.save();
     }
+
+    const newTask = new Task({
+      taskId,
+      project: project._id,
+      user: assignedUser ? assignedUser._id : user?._id,
+      task,
+      startDate,
+      dueDate,
+      ...(user ? { assignedBy: user._id } : { added: true }), // Assign 'assignedBy' only if user exists
+    });
+
+    await newTask.save();
 
     res.json({
       success: true,
@@ -241,6 +252,7 @@ const getMonthWiseTaskUser = async (req, res) => {
 };
 
 export {
+  getAllTasks,
   addTask,
   editTask,
   deleteTask,
