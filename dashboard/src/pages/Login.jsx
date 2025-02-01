@@ -7,7 +7,7 @@ import { ManagerContext } from "../context/ManagerContext.jsx";
 import KorusImg from "../assets/Korus.png";
 
 const Login = () => {
-  const [state, setState] = useState("User");
+  const [state, setState] = useState("Admin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setAToken } = useContext(AdminContext);
