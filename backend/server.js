@@ -18,7 +18,13 @@ dbConnect();
 
 // Middlewares
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://korus-pms.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  })
+);
 
 // API Endpoint
 app.use("/api/admin", adminRouter);
