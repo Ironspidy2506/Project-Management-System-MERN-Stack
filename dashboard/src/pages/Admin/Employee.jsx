@@ -31,7 +31,7 @@ const Employee = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-users`,
+        `https://korus-pms.onrender.com/api/user/get-users`,
         {
           headers: { atoken },
         }
@@ -59,7 +59,7 @@ const Employee = () => {
     if (state === "Add") {
       try {
         const { data } = await axios.post(
-          `http://localhost:5000/api/user/add-user`,
+          `https://korus-pms.onrender.com/api/user/add-user`,
           employeeDetails,
           {
             headers: { atoken },
@@ -78,7 +78,7 @@ const Employee = () => {
     } else if (state === "Edit") {
       try {
         const { data } = await axios.post(
-          `http://localhost:5000/api/user/edit-user/${employeeDetails._id}`,
+          `https://korus-pms.onrender.com/api/user/edit-user/${employeeDetails._id}`,
           employeeDetails,
           {
             headers: { atoken },
@@ -113,7 +113,7 @@ const Employee = () => {
   const handleDeleteEmployee = async (_id) => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:5000/api/user/delete-user/${_id}`,
+        `https://korus-pms.onrender.com/api/user/delete-user/${_id}`,
         {
           headers: { atoken },
         }
@@ -132,7 +132,7 @@ const Employee = () => {
   const getDepartments = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/department/get-departments`,
+        `https://korus-pms.onrender.com/api/department/get-departments`,
         {
           headers: { atoken },
         }

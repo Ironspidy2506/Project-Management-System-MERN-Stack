@@ -20,7 +20,7 @@ const EmployeeProjects = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-projects`,
+        `https://korus-pms.onrender.com/api/user/get-my-projects`,
         {
           headers: { token },
         }
@@ -44,7 +44,7 @@ const EmployeeProjects = () => {
       }
 
       const { data } = await axios.post(
-        `http://localhost:5000/api/project-log/start-project`,
+        `https://korus-pms.onrender.com/api/project-log/start-project`,
         {
           projectId,
           projectPassword,
@@ -87,7 +87,7 @@ const EmployeeProjects = () => {
       }
 
       const { data } = await axios.post(
-        `http://localhost:5000/api/project-log/end-project`,
+        `https://korus-pms.onrender.com/api/project-log/end-project`,
         {
           logId,
           endTime: Date.now(), // Send end time as part of the request

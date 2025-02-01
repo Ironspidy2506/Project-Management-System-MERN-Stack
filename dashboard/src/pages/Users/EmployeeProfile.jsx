@@ -10,7 +10,7 @@ const EmployeeProfile = () => {
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-profile`,
+        `https://korus-pms.onrender.com/api/user/get-my-profile`,
         {
           headers: { token },
         }

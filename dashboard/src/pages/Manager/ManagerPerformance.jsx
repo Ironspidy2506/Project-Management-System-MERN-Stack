@@ -33,7 +33,7 @@ const ManagerPerformance = () => {
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-profile`,
+        `https://korus-pms.onrender.com/api/user/get-my-profile`,
         {
           headers: { mtoken },
         }
@@ -47,7 +47,7 @@ const ManagerPerformance = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-users-for-performance`,
+        `https://korus-pms.onrender.com/api/user/get-users-for-performance`,
         {
           headers: { mtoken },
         }
@@ -68,7 +68,7 @@ const ManagerPerformance = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-projects`,
+        `https://korus-pms.onrender.com/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -83,7 +83,7 @@ const ManagerPerformance = () => {
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-performances`,
+        `https://korus-pms.onrender.com/api/user/get-my-performances`,
         {
           headers: { mtoken },
         }
@@ -122,7 +122,7 @@ const ManagerPerformance = () => {
 
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/performances/add-performance`,
+        `https://korus-pms.onrender.com/api/performances/add-performance`,
         {
           performanceId,
           projectId,
@@ -176,7 +176,7 @@ const ManagerPerformance = () => {
 
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/performances/edit-performance/${performanceDatabaseId}`,
+        `https://korus-pms.onrender.com/api/performances/edit-performance/${performanceDatabaseId}`,
         {
           drawingType,
           date,
@@ -221,7 +221,7 @@ const ManagerPerformance = () => {
   const handleDeletePerformance = async (performanceId) => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:5000/api/performances/delete-performance/${performanceId}`,
+        `https://korus-pms.onrender.com/api/performances/delete-performance/${performanceId}`,
         {
           headers: { mtoken },
         }
@@ -288,7 +288,7 @@ const ManagerPerformance = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/performances/get-date-wise/${date}`,
+          `https://korus-pms.onrender.com/api/performances/get-date-wise/${date}`,
           { headers: { mtoken } }
         );
 
@@ -304,7 +304,7 @@ const ManagerPerformance = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/performances/get-month-wise/${month}/${year}`,
+          `https://korus-pms.onrender.com/api/performances/get-month-wise/${month}/${year}`,
           { headers: { mtoken } }
         );
 
