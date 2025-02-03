@@ -17,6 +17,16 @@ const EmployeeProjects = () => {
     }
   }, [token]);
 
+  useEffect(() => {
+    // Check if there's a running project in localStorage
+    const logId = localStorage.getItem("currentLogId");
+    if (logId) {
+      // If there's a log ID, set tracking state to true and fetch the start time
+      setIsTracking(true);
+      setStartTime(localStorage.getItem("startTime"));
+    }
+  }, []);
+
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
@@ -43,12 +53,15 @@ const EmployeeProjects = () => {
         return;
       }
 
+      const startDate = new Date(); // Get current date and time
+      const startTime = startDate.toISOString(); // Convert it to ISO string format
+
       const { data } = await axios.post(
         `https://korus-pms.onrender.com/api/project-log/start-project`,
         {
           projectId,
           projectPassword,
-          startTime: Date.now(), // Send start time as part of the request
+          startTime, // Send the start time (ISO string)
         },
         {
           headers: { token },
@@ -59,7 +72,7 @@ const EmployeeProjects = () => {
         const logId = data.logId;
         localStorage.setItem("currentLogId", logId);
         setIsTracking(true);
-        setStartTime(Date.now()); // Set start time locally as well
+        setStartTime(startTime); // Set start time locally
         toast.success(data.message);
       } else {
         toast.error(data.message);
