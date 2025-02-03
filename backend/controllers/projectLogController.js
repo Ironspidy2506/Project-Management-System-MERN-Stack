@@ -23,10 +23,11 @@ const getAllLogs = async (req, res) => {
 
 const startProject = async (req, res) => {
   try {
-    const { userId, projectId, projectPassword, startDate, startTime } =
+    const { userId, projectId, projectPassword, startTime } =
       req.body;
 
-    const startTimestamp = new Date(`${startDate}T${startTime}:00.000Z`);
+      console.log({ userId, projectId, projectPassword, startTime });
+
 
     const user = await User.findById(userId);
     if (!user) {
@@ -49,7 +50,7 @@ const startProject = async (req, res) => {
     const projectLog = new ProjectLog({
       project: project._id,
       user: user._id,
-      startTime: startTimestamp,
+      startTime: startTime,
     });
 
     await projectLog.save();
@@ -70,9 +71,7 @@ const startProject = async (req, res) => {
 
 const endProject = async (req, res) => {
   try {
-    const { logId, endDate, endTime } = req.body;
-
-    const endTimestamp = new Date(`${endDate}T${endTime}:00.000Z`);
+    const { logId, endTime } = req.body;
 
     const projectLog = await ProjectLog.findById(logId);
     if (!projectLog) {
@@ -83,11 +82,11 @@ const endProject = async (req, res) => {
     }
 
     const totalTime = (
-      (endTimestamp - projectLog.startTime) /
+      (endTime - projectLog.startTime) /
       (1000 * 60 * 60)
     ).toFixed(2);
 
-    projectLog.endTime = endTimestamp;
+    projectLog.endTime = endTime;
     projectLog.totalTime = totalTime;
 
     await projectLog.save();
