@@ -33,6 +33,7 @@ import ManagerLogs from "./pages/Manager/ManagerLogs.jsx";
 import ManagerEmployeeLogs from "./pages/Manager/ManagerEmployeeLogs.jsx";
 import CostLogs from "./pages/Admin/CostLogs.jsx";
 import Logs from "./pages/Admin/Logs.jsx";
+import AutoLogout from "./utils/AutoLogout.jsx";
 
 const App = () => {
   const { atoken } = useContext(AdminContext);
@@ -45,88 +46,94 @@ const App = () => {
   };
 
   return atoken || mtoken || token ? (
-    <div className="flex flex-col min-h-screen">
-      <Navbar toggleSidebar={toggleSidebar} />
-      <div className="flex flex-1">
-        {/* Sidebar: Adjusted for responsiveness */}
-        <Sidebar
-          isOpen={isSidebarOpen}
-          toggleSidebar={toggleSidebar}
-          className={`fixed inset-y-0 left-0 w-64 bg-gray-800 transform ${
-            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } md:relative md:translate-x-0 transition-transform duration-300`}
-        />
+    <>
+      <AutoLogout />
+      <div className="flex flex-col min-h-screen">
+        <Navbar toggleSidebar={toggleSidebar} />
+        <div className="flex flex-1">
+          {/* Sidebar: Adjusted for responsiveness */}
+          <Sidebar
+            isOpen={isSidebarOpen}
+            toggleSidebar={toggleSidebar}
+            className={`fixed inset-y-0 left-0 w-64 bg-gray-800 transform ${
+              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+            } md:relative md:translate-x-0 transition-transform duration-300`}
+          />
 
-        <div className="flex-1 pt-20 px-4 md:ml-64 lg:px-8">
-          <ToastContainer />
-          <Routes>
-            {/* Admin Routes */}
-            <Route
-              path="/"
-              element={
-                <div className="text-center mt-5">
-                  <h2 className="text-xl font-semibold mb-4 text-blue-500">
-                    Welcome to the{" "}
-                    {atoken ? "Admin" : mtoken ? "Manager" : "Employee"}{" "}
-                    Dashboard!
-                  </h2>
-                  <h3 className="text-lg font-semibold text-blue-500">
-                    Please select an option to continue!
-                  </h3>
-                </div>
-              }
-            />
-            <Route path="/admin-dashboard" element={<Dashboard />} />
-            <Route path="/projects" element={<Project />} />
-            <Route path="/tasks" element={<Tasks />} />
-            <Route path="/performance" element={<Performance />} />
-            <Route path="/departments" element={<Department />} />
-            <Route path="/employees" element={<Employee />} />
-            <Route path="/logs" element={<Logs />} />
-            <Route path="/projects/costs-log" element={<CostLogs />} />
+          <div className="flex-1 pt-20 px-4 md:ml-64 lg:px-8">
+            <ToastContainer />
+            <Routes>
+              {/* Admin Routes */}
+              <Route
+                path="/"
+                element={
+                  <div className="text-center mt-5">
+                    <h2 className="text-xl font-semibold mb-4 text-blue-500">
+                      Welcome to the{" "}
+                      {atoken ? "Admin" : mtoken ? "Manager" : "Employee"}{" "}
+                      Dashboard!
+                    </h2>
+                    <h3 className="text-lg font-semibold text-blue-500">
+                      Please select an option to continue!
+                    </h3>
+                  </div>
+                }
+              />
+              <Route path="/admin-dashboard" element={<Dashboard />} />
+              <Route path="/projects" element={<Project />} />
+              <Route path="/tasks" element={<Tasks />} />
+              <Route path="/performance" element={<Performance />} />
+              <Route path="/departments" element={<Department />} />
+              <Route path="/employees" element={<Employee />} />
+              <Route path="/logs" element={<Logs />} />
+              <Route path="/projects/costs-log" element={<CostLogs />} />
 
-            {/* Employee Routes */}
-            <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
-            <Route path="/employee-projects" element={<EmployeeProjects />} />
-            <Route path="/employee-tasks" element={<EmployeeTasks />} />
-            <Route path="/employee-profile" element={<EmployeeProfile />} />
-            <Route
-              path="/employee-performance"
-              element={<EmployeePerformance />}
-            />
-            <Route path="/employee-logs" element={<EmployeeLogs />} />
+              {/* Employee Routes */}
+              <Route
+                path="/employee-dashboard"
+                element={<EmployeeDashboard />}
+              />
+              <Route path="/employee-projects" element={<EmployeeProjects />} />
+              <Route path="/employee-tasks" element={<EmployeeTasks />} />
+              <Route path="/employee-profile" element={<EmployeeProfile />} />
+              <Route
+                path="/employee-performance"
+                element={<EmployeePerformance />}
+              />
+              <Route path="/employee-logs" element={<EmployeeLogs />} />
 
-            {/* Manager Routes */}
-            <Route path="/manager-dashboard" element={<ManagerDashboard />} />
-            <Route path="/manager-projects" element={<ManagerProjects />} />
-            <Route
-              path="/manager-projects/cost-log"
-              element={<ManagerCostLog />}
-            />
-            <Route path="/manager-tasks" element={<ManagerTasks />} />
-            <Route
-              path="/manager-tasks/employee-tasks"
-              element={<ManagerEmployeeTasks />}
-            />
-            <Route path="/manager-profile" element={<ManagerProfile />} />
-            <Route
-              path="/manager-performance"
-              element={<ManagerPerformance />}
-            />
-            <Route
-              path="/manager-performance/employee-performances"
-              element={<ManagerEmployeePerformances />}
-            />
-            <Route path="/manager-employees" element={<ManagerEmployees />} />
-            <Route path="/manager-logs" element={<ManagerLogs />} />
-            <Route
-              path="/manager-logs/employee-logs"
-              element={<ManagerEmployeeLogs />}
-            />
-          </Routes>
+              {/* Manager Routes */}
+              <Route path="/manager-dashboard" element={<ManagerDashboard />} />
+              <Route path="/manager-projects" element={<ManagerProjects />} />
+              <Route
+                path="/manager-projects/cost-log"
+                element={<ManagerCostLog />}
+              />
+              <Route path="/manager-tasks" element={<ManagerTasks />} />
+              <Route
+                path="/manager-tasks/employee-tasks"
+                element={<ManagerEmployeeTasks />}
+              />
+              <Route path="/manager-profile" element={<ManagerProfile />} />
+              <Route
+                path="/manager-performance"
+                element={<ManagerPerformance />}
+              />
+              <Route
+                path="/manager-performance/employee-performances"
+                element={<ManagerEmployeePerformances />}
+              />
+              <Route path="/manager-employees" element={<ManagerEmployees />} />
+              <Route path="/manager-logs" element={<ManagerLogs />} />
+              <Route
+                path="/manager-logs/employee-logs"
+                element={<ManagerEmployeeLogs />}
+              />
+            </Routes>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   ) : (
     <>
       <Login />

@@ -411,9 +411,7 @@ const Project = () => {
                   {project.currentHours || 0}
                 </td>
                 <td className="border border-gray-200 px-4 py-2 text-center">
-                  <span className="bg-gray-300 p-2 rounded-full">
-                    {project.status}
-                  </span>
+                  {project.status}
                 </td>
                 <td className="border border-gray-200 px-4 py-2 text-center">
                   <button

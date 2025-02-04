@@ -1,32 +1,23 @@
 import React, { useContext } from "react";
-import { AdminContext } from "../context/AdminContext.jsx";
-import { useNavigate } from "react-router-dom";
-import { UserContext } from "../context/UserContext.jsx";
 import KorusImg from "../assets/Korus.png";
-import { ManagerContext } from "../context/ManagerContext.jsx";
+import { useNavigate } from "react-router-dom"; // To navigate on logout
+import { AdminContext } from "../context/AdminContext";
+import { UserContext } from "../context/UserContext";
+import { ManagerContext } from "../context/ManagerContext";
+import { logout } from "../utils/Logout";
+import { toast } from "react-toastify";
 
 const Navbar = ({ toggleSidebar }) => {
+  const navigate = useNavigate();
+
+  // Access the context values
   const { atoken, setAToken } = useContext(AdminContext);
   const { mtoken, setMToken } = useContext(ManagerContext);
   const { token, setToken } = useContext(UserContext);
-  const navigate = useNavigate();
 
-  const logout = () => {
-    navigate("/");
-    if (atoken) {
-      setAToken("");
-      localStorage.removeItem("atoken");
-    }
-
-    if (mtoken) {
-      setMToken("");
-      localStorage.removeItem("mtoken");
-    }
-
-    if (token) {
-      setToken("");
-      localStorage.removeItem("token");
-    }
+  // Handle Logout
+  const handleLogout = () => {
+    logout(navigate, atoken, setAToken, mtoken, setMToken, token, setToken); // Pass required params
   };
 
   return (
@@ -60,7 +51,7 @@ const Navbar = ({ toggleSidebar }) => {
 
         {/* Logout Button */}
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300 text-sm font-medium text-white"
         >
           Logout

@@ -90,7 +90,7 @@ const ManagerEmployeeLogs = () => {
     handleSearch();
   }, [searchQuery]);
 
-  const formatDateTime = (dateTime) => {
+  const formatAddedDateTime = (dateTime) => {
     const [date, time] = dateTime.split("T");
     const [year, month, day] = date.split("-");
     const formattedDate = `${day}-${month}-${year}`;
@@ -103,6 +103,22 @@ const ManagerEmployeeLogs = () => {
     hours = hours % 12 || 12;
 
     return `${formattedDate} ${hours}:${minutes} ${ampm}`;
+  };
+
+  const formatCapturedDateTime = (dateTime) => {
+    const date = new Date(dateTime); // Convert the string to a Date object
+    const day = String(date.getDate()).padStart(2, "0"); // Add leading zero if day is single digit
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Add leading zero if month is single digit
+    const year = date.getFullYear(); // Get the year
+
+    let hours = date.getHours(); // Get hours
+    const minutes = String(date.getMinutes()).padStart(2, "0"); // Get minutes with leading zero
+
+    const ampm = hours >= 12 ? "PM" : "AM"; // Check if it's AM or PM
+    hours = hours % 12; // Convert 24-hour format to 12-hour format
+    hours = hours ? hours : 12; // If hours is 0, change to 12 for 12 AM
+
+    return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`; // Format to dd-mm-yyyy hh:mm AM/PM
   };
 
   return (
@@ -252,10 +268,18 @@ const ManagerEmployeeLogs = () => {
                     {formatDateTime(logs.startTime)}
                   </td>
                   <td className="border px-4 py-2 text-sm text-center text-gray-800">
-                    {formatDateTime(logs.endTime)}
+                    {logs.startTime
+                      ? logs.added
+                        ? formatAddedDateTime(logs.startTime)
+                        : formatCapturedDateTime(logs.startTime)
+                      : ""}
                   </td>
                   <td className="border px-4 py-2 text-sm text-center text-gray-800">
-                    {logs.totalTime} Hrs
+                    {logs.endTime
+                      ? logs.added
+                        ? formatAddedDateTime(logs.endTime)
+                        : formatCapturedDateTime(logs.endTime)
+                      : "Time not captured yet"}
                   </td>
                   <td className="border px-4 py-2 text-sm text-center text-gray-800">
                     {logs.added ? "Added" : "Captured"}
