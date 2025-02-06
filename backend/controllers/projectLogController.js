@@ -23,11 +23,7 @@ const getAllLogs = async (req, res) => {
 
 const startProject = async (req, res) => {
   try {
-    const { userId, projectId, projectPassword, startTime } =
-      req.body;
-
-      console.log({ userId, projectId, projectPassword, startTime });
-
+    const { userId, projectId, projectPassword, startTime } = req.body;
 
     const user = await User.findById(userId);
     if (!user) {

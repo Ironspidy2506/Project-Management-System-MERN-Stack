@@ -5,11 +5,9 @@ const addProject = async (req, res) => {
   try {
     const project = new Project(req.body);
     await project.save();
-    res
-      .status(201)
-      .json({ success: true, message: "Project added successfully" });
+    res.json({ success: true, message: "Project added successfully" });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    res.json({ success: false, error: error.message });
   }
 };
 
@@ -21,15 +19,14 @@ const editProject = async (req, res) => {
       new: true,
     });
     if (!updatedProject) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Project not found" });
+      return res.json({ success: false, error: "Project not found" });
     }
-    res
-      .status(200)
-      .json({ success: true, message: "Project details updated successfully" });
+    res.json({
+      success: true,
+      message: "Project details updated successfully",
+    });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    res.json({ success: false, error: error.message });
   }
 };
 
@@ -39,15 +36,11 @@ const deleteProject = async (req, res) => {
   try {
     const deletedProject = await Project.findByIdAndDelete(_id);
     if (!deletedProject) {
-      return res
-        .status(404)
-        .json({ success: false, error: "Project not found" });
+      return res.json({ success: false, error: "Project not found" });
     }
-    res
-      .status(200)
-      .json({ success: true, message: "Project deleted successfully" });
+    res.json({ success: true, message: "Project deleted successfully" });
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    res.json({ success: false, error: error.message });
   }
 };
 
