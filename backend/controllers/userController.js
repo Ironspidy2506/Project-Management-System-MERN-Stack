@@ -34,14 +34,14 @@ const loginUser = async (req, res) => {
     const secretKey = process.env.JWT_SECRET_KEY;
 
     if (user.role === "Manager") {
-      const mtoken = jwt.sign(payload, secretKey, { expiresIn: "24h" });
+      const mtoken = jwt.sign(payload, secretKey, { expiresIn: "7d" });
       return res.json({
         success: true,
         mtoken,
         message: "Manager Login Successful",
       });
     } else {
-      const token = jwt.sign(payload, secretKey, { expiresIn: "24h" });
+      const token = jwt.sign(payload, secretKey, { expiresIn: "7d" });
       return res.json({
         success: true,
         token,
@@ -113,7 +113,7 @@ const addUser = async (req, res) => {
     const user = await newUser.save();
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, {
-      expiresIn: "1d",
+      expiresIn: "7d",
     });
 
     return res.json({
