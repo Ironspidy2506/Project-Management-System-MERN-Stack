@@ -19,7 +19,7 @@ const Dashboard = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/projects/get-projects`,
+        `http://localhost:5000/api/projects/get-projects`,
         { headers: { atoken } }
       );
       if (data.success) {
@@ -35,7 +35,7 @@ const Dashboard = () => {
   const getTasks = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/tasks/get-tasks`,
+        `http://localhost:5000/api/tasks/get-tasks`,
         { headers: { atoken } }
       );
       if (data.success) setTasks(data.tasks);
@@ -48,7 +48,7 @@ const Dashboard = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-users`,
+        `http://localhost:5000/api/user/get-users`,
         { headers: { atoken } }
       );
       if (data.success) {
@@ -64,7 +64,7 @@ const Dashboard = () => {
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/performances/get-performances`,
+        `http://localhost:5000/api/performances/get-performances`,
         { headers: { atoken } }
       );
       if (data.success) {
@@ -80,7 +80,7 @@ const Dashboard = () => {
   const getDepartments = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/department/get-departments`,
+        `http://localhost:5000/api/department/get-departments`,
         { headers: { atoken } }
       );
       if (data.success) {
@@ -96,7 +96,7 @@ const Dashboard = () => {
   const getLogs = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/project-log/get-logs`,
+        `http://localhost:5000/api/project-log/get-logs`,
         { headers: { atoken } }
       );
       if (data.success) {

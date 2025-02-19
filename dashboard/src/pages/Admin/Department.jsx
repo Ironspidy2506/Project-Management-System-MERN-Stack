@@ -31,7 +31,7 @@ const Department = () => {
   const getDepartments = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/department/get-departments`,
+        `http://localhost:5000/api/department/get-departments`,
         {
           headers: { atoken },
         }
@@ -59,7 +59,7 @@ const Department = () => {
     if (state === "Add") {
       try {
         const { data } = await axios.post(
-          `https://korus-pms.onrender.com/api/department/add-department`,
+          `http://localhost:5000/api/department/add-department`,
           departmentDetails,
           {
             headers: { atoken },
@@ -78,7 +78,7 @@ const Department = () => {
     } else if (state === "Edit") {
       try {
         const { data } = await axios.post(
-          `https://korus-pms.onrender.com/api/department/edit-department/${departmentDetails._id}`,
+          `http://localhost:5000/api/department/edit-department/${departmentDetails._id}`,
           departmentDetails,
           {
             headers: { atoken },
@@ -110,7 +110,7 @@ const Department = () => {
   const handleDeleteDepartment = async (_id) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms.onrender.com/api/department/delete-department/${_id}`,
+        `http://localhost:5000/api/department/delete-department/${_id}`,
         {
           headers: { atoken },
         }

@@ -27,7 +27,7 @@ const EmployeeLogs = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-projects`,
+        `http://localhost:5000/api/user/get-my-projects`,
         {
           headers: { token },
         }
@@ -45,7 +45,7 @@ const EmployeeLogs = () => {
   const getProjectLogs = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-project-logs`,
+        `http://localhost:5000/api/user/get-my-project-logs`,
         {
           headers: { token },
         }
@@ -108,7 +108,7 @@ const EmployeeLogs = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/project-log/add-log`,
+        `http://localhost:5000/api/project-log/add-log`,
         logDetails, // Use logDetails directly
         {
           headers: { token },
@@ -146,7 +146,7 @@ const EmployeeLogs = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/project-log/edit-log/${logDatabaseId}`,
+        `http://localhost:5000/api/project-log/edit-log/${logDatabaseId}`,
         logDetails,
         {
           headers: { token },
@@ -196,7 +196,7 @@ const EmployeeLogs = () => {
   const handleDeleteLog = async (logId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms.onrender.com/api/project-log/delete-log/${logId}`,
+        `http://localhost:5000/api/project-log/delete-log/${logId}`,
         {
           headers: { token },
         }
@@ -214,7 +214,7 @@ const EmployeeLogs = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/project-log/get-date-wise/${date}`,
+          `http://localhost:5000/api/project-log/get-date-wise/${date}`,
           { headers: { token } }
         );
 
@@ -233,7 +233,7 @@ const EmployeeLogs = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/project-log/get-month-wise/${month}/${year}`,
+          `http://localhost:5000/api/project-log/get-month-wise/${month}/${year}`,
           { headers: { token } }
         );
 
@@ -428,8 +428,6 @@ const EmployeeLogs = () => {
                     {logs.added ? "Added" : "Captured"}
                   </td>
                   <td className="border px-4 py-2 text-center">
-                    {" "}
-                    {/* Centering td content */}
                     {logs.added ? (
                       <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
                         <button
@@ -438,14 +436,14 @@ const EmployeeLogs = () => {
                         >
                           Edit
                         </button>
-                        <button
-                          onClick={() => handleDeleteLog(logs._id)}
-                          className="px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600"
-                        >
-                          Delete
-                        </button>
                       </div>
                     ) : null}
+                    <button
+                      onClick={() => handleDeleteLog(logs._id)}
+                      className="px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

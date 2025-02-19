@@ -8,7 +8,7 @@ import { ManagerContext } from "../context/ManagerContext.jsx";
 import KorusImg from "../assets/Korus.png";
 
 const Login = () => {
-  const [state, setState] = useState("Admin");
+  const [state, setState] = useState("User");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
@@ -27,7 +27,7 @@ const Login = () => {
     try {
       if (state === "Admin") {
         const { data } = await axios.post(
-          `https://korus-pms.onrender.com/api/admin/login`,
+          `http://localhost:5000/api/admin/login`,
           { email, password }
         );
 
@@ -39,7 +39,7 @@ const Login = () => {
         }
       } else {
         const { data } = await axios.post(
-          `https://korus-pms.onrender.com/api/user/login`,
+          `http://localhost:5000/api/user/login`,
           { email, password }
         );
 

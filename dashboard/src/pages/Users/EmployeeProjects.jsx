@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { UserContext } from "../../context/UserContext.jsx";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"; // Import icons
 
 const EmployeeProjects = () => {
   const { token } = useContext(UserContext);
@@ -10,6 +11,7 @@ const EmployeeProjects = () => {
   const [projectPassword, setProjectPassword] = useState("");
   const [isTracking, setIsTracking] = useState(false);
   const [startTime, setStartTime] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -22,6 +24,8 @@ const EmployeeProjects = () => {
     const logId = localStorage.getItem("currentLogId");
     if (logId) {
       // If there's a log ID, set tracking state to true and fetch the start time
+      setProjectId(localStorage.getItem("selectedProjectId"));
+      setProjectPassword(localStorage.getItem("selectedProjectPassword"));
       setIsTracking(true);
       setStartTime(localStorage.getItem("startTime"));
     }
@@ -30,7 +34,7 @@ const EmployeeProjects = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-projects`,
+        `http://localhost:5000/api/user/get-my-projects`,
         {
           headers: { token },
         }
@@ -57,7 +61,7 @@ const EmployeeProjects = () => {
       const startTime = startDate.toISOString(); // Convert it to ISO string format
 
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/project-log/start-project`,
+        `http://localhost:5000/api/project-log/start-project`,
         {
           projectId,
           projectPassword,
@@ -100,7 +104,7 @@ const EmployeeProjects = () => {
       }
 
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/project-log/end-project`,
+        `http://localhost:5000/api/project-log/end-project`,
         {
           logId,
           endTime: Date.now(), // Send end time as part of the request
@@ -113,6 +117,10 @@ const EmployeeProjects = () => {
       if (data.success) {
         toast.success(data.message);
         localStorage.removeItem("currentLogId");
+        localStorage.removeItem("selectedProjectId");
+        localStorage.removeItem("selectedProjectPassword");
+        setProjectId("");
+        setProjectPassword("");
         setIsTracking(false);
         setStartTime(null);
         getProjects();
@@ -125,6 +133,21 @@ const EmployeeProjects = () => {
         error.response?.data?.message || "An unexpected error occurred."
       );
     }
+  };
+
+  // Update project ID and save to localStorage
+  const handleProjectChange = (e) => {
+    const selectedProject = e.target.value;
+    setProjectId(selectedProject);
+    setProjectPassword(""); // Reset password when changing projects
+    localStorage.setItem("selectedProjectId", selectedProject);
+  };
+
+  // Update project password and save to localStorage
+  const handlePasswordChange = (e) => {
+    const password = e.target.value;
+    setProjectPassword(password);
+    localStorage.setItem("selectedProjectPassword", password);
   };
 
   return (
@@ -144,20 +167,46 @@ const EmployeeProjects = () => {
               Time Capture for:
             </label>
           </div>
-          <input
-            type="text"
-            placeholder="Enter Project ID"
+          <select
             value={projectId}
-            onChange={(e) => setProjectId(e.target.value)}
+            onChange={handleProjectChange}
             className="p-2 border rounded-md w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
-          />
-          <input
-            type="password"
-            placeholder="Enter Project Password"
-            value={projectPassword}
-            onChange={(e) => setProjectPassword(e.target.value)}
-            className="p-2 border rounded-md w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
-          />
+          >
+            <option value="" disabled>
+              Select a project
+            </option>
+            {projects.map((project) => (
+              <option key={project.projectId} value={project.projectId}>
+                {project.projectId} - {project.projectName}
+              </option>
+            ))}
+          </select>
+
+          {/* Password Input with Eye Toggle */}
+          <div className="relative w-1/3">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Enter Project Password"
+              value={projectPassword}
+              onChange={handlePasswordChange}
+              className="p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+              autoComplete="off"
+              name="fakePassword"
+              id="fakePassword"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-3 flex items-center text-gray-600"
+            >
+              {showPassword ? (
+                <AiOutlineEyeInvisible size={22} />
+              ) : (
+                <AiOutlineEye size={22} />
+              )}
+            </button>
+          </div>
+
           {!isTracking ? (
             <button
               onClick={handleStartTracking}

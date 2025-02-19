@@ -15,7 +15,7 @@ const ManagerDashboard = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-projects`,
+        `http://localhost:5000/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -33,7 +33,7 @@ const ManagerDashboard = () => {
   const getTasks = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-tasks`,
+        `http://localhost:5000/api/user/get-my-tasks`,
         {
           headers: { mtoken },
         }
@@ -49,7 +49,7 @@ const ManagerDashboard = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-users-manager`,
+        `http://localhost:5000/api/user/get-users-manager`,
         {
           headers: { mtoken },
         }
@@ -68,7 +68,7 @@ const ManagerDashboard = () => {
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-performances`,
+        `http://localhost:5000/api/user/get-my-performances`,
         {
           headers: { mtoken },
         }

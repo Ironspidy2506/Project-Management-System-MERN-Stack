@@ -29,7 +29,7 @@ const ManagerLogs = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-projects`,
+        `http://localhost:5000/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -47,7 +47,7 @@ const ManagerLogs = () => {
   const getProjectLogs = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-project-logs`,
+        `http://localhost:5000/api/user/get-my-project-logs`,
         {
           headers: { mtoken },
         }
@@ -61,7 +61,7 @@ const ManagerLogs = () => {
     }
   };
 
-  const formatDateTime = (dateTime) => {
+  const formatAddedDateTime = (dateTime) => {
     const [date, time] = dateTime.split("T");
     const [year, month, day] = date.split("-");
     const formattedDate = `${day}-${month}-${year}`;
@@ -74,6 +74,22 @@ const ManagerLogs = () => {
     hours = hours % 12 || 12;
 
     return `${formattedDate} ${hours}:${minutes} ${ampm}`;
+  };
+
+  const formatCapturedDateTime = (dateTime) => {
+    const date = new Date(dateTime); // Convert the string to a Date object
+    const day = String(date.getDate()).padStart(2, "0"); // Add leading zero if day is single digit
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Add leading zero if month is single digit
+    const year = date.getFullYear(); // Get the year
+
+    let hours = date.getHours(); // Get hours
+    const minutes = String(date.getMinutes()).padStart(2, "0"); // Get minutes with leading zero
+
+    const ampm = hours >= 12 ? "PM" : "AM"; // Check if it's AM or PM
+    hours = hours % 12; // Convert 24-hour format to 12-hour format
+    hours = hours ? hours : 12; // If hours is 0, change to 12 for 12 AM
+
+    return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`; // Format to dd-mm-yyyy hh:mm AM/PM
   };
 
   useEffect(() => {
@@ -93,7 +109,7 @@ const ManagerLogs = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/project-log/add-log`,
+        `http://localhost:5000/api/project-log/add-log`,
         logDetails, // Use logDetails directly
         {
           headers: { mtoken },
@@ -131,7 +147,7 @@ const ManagerLogs = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/project-log/edit-log/${logDatabaseId}`,
+        `http://localhost:5000/api/project-log/edit-log/${logDatabaseId}`,
         logDetails,
         {
           headers: { mtoken },
@@ -181,7 +197,7 @@ const ManagerLogs = () => {
   const handleDeleteLog = async (logId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms.onrender.com/api/project-log/delete-log/${logId}`,
+        `http://localhost:5000/api/project-log/delete-log/${logId}`,
         {
           headers: { mtoken },
         }
@@ -199,7 +215,7 @@ const ManagerLogs = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/project-log/get-date-wise/${date}`,
+          `http://localhost:5000/api/project-log/get-date-wise/${date}`,
           { headers: { mtoken } }
         );
 
@@ -218,7 +234,7 @@ const ManagerLogs = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/project-log/get-month-wise/${month}/${year}`,
+          `http://localhost:5000/api/project-log/get-month-wise/${month}/${year}`,
           { headers: { mtoken } }
         );
 
@@ -398,10 +414,18 @@ const ManagerLogs = () => {
                     {logs.project?.projectName}
                   </td>
                   <td className="border px-4 py-2 text-sm text-center text-gray-800">
-                    {logs.startTime ? formatDateTime(logs.startTime) : ""}
+                    {logs.startTime
+                      ? logs.added
+                        ? formatAddedDateTime(logs.startTime)
+                        : formatCapturedDateTime(logs.startTime)
+                      : ""}
                   </td>
                   <td className="border px-4 py-2 text-sm text-center text-gray-800">
-                    {logs.endTime ? formatDateTime(logs.endTime) : ""}
+                    {logs.endTime
+                      ? logs.added
+                        ? formatAddedDateTime(logs.endTime)
+                        : formatCapturedDateTime(logs.endTime)
+                      : "Time not captured yet"}
                   </td>
                   <td className="border px-4 py-2 text-sm text-center text-gray-800">
                     {logs.totalTime}
@@ -410,20 +434,22 @@ const ManagerLogs = () => {
                     {logs.added ? "Added" : "Captured"}
                   </td>
                   <td className="border px-4 py-2 flex justify-center gap-2">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleEdit(logs)}
-                        className="px-4 py-2 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDeleteLog(logs._id)}
-                        className="px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                    {logs.added ? (
+                      <div className="flex flex-col md:flex-row gap-2 justify-center items-center">
+                        <button
+                          onClick={() => handleEdit(logs)}
+                          className="px-4 py-2 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    ) : null}
+                    <button
+                      onClick={() => handleDeleteLog(logs._id)}
+                      className="px-4 py-2 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

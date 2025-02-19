@@ -19,7 +19,7 @@ const CostLogs = () => {
   const getCosts = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/cost/get-costs`,
+        `http://localhost:5000/api/cost/get-costs`,
         {
           headers: { atoken },
         }
@@ -45,7 +45,7 @@ const CostLogs = () => {
   const handleSave = async (costId) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/cost/edit-cost/${costId}`,
+        `http://localhost:5000/api/cost/edit-cost/${costId}`,
         editedCost,
         { headers: { atoken } }
       );
@@ -67,7 +67,7 @@ const CostLogs = () => {
   const handleDelete = async (costId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms.onrender.com/api/cost/delete-cost/${costId}`,
+        `http://localhost:5000/api/cost/delete-cost/${costId}`,
         { headers: { atoken } }
       );
 

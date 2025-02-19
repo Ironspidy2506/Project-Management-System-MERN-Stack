@@ -18,7 +18,7 @@ const ManagerEmployeeLogs = () => {
   const getProjectLogs = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/project-log/get-employee-project-logs`,
+        `http://localhost:5000/api/project-log/get-employee-project-logs`,
         {
           headers: { mtoken },
         }

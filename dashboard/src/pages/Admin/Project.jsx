@@ -39,7 +39,7 @@ const Project = () => {
     try {
       if (state === "Edit") {
         const { data } = await axios.post(
-          `https://korus-pms.onrender.com/api/projects/edit-project/${projectDetails._id}`,
+          `http://localhost:5000/api/projects/edit-project/${projectDetails._id}`,
           projectDetails,
           {
             headers: { atoken },
@@ -53,7 +53,7 @@ const Project = () => {
         }
       } else {
         const { data } = await axios.post(
-          `https://korus-pms.onrender.com/api/projects/add-project`,
+          `http://localhost:5000/api/projects/add-project`,
           projectDetails,
           {
             headers: { atoken },
@@ -76,7 +76,7 @@ const Project = () => {
   const handleDelete = async (projectId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms.onrender.com/api/projects/delete-project/${projectId}`,
+        `http://localhost:5000/api/projects/delete-project/${projectId}`,
         {
           headers: { atoken },
         }
@@ -95,7 +95,7 @@ const Project = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/projects/get-projects`,
+        `http://localhost:5000/api/projects/get-projects`,
         {
           headers: { atoken },
         }
@@ -114,7 +114,7 @@ const Project = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-users`,
+        `http://localhost:5000/api/user/get-users`,
         {
           headers: { atoken },
         }
@@ -253,7 +253,7 @@ const Project = () => {
   const getCosts = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/cost/get-costs`,
+        `http://localhost:5000/api/cost/get-costs`,
         {
           headers: { atoken },
         }
@@ -296,7 +296,7 @@ const Project = () => {
       }
 
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/cost/add-cost`,
+        `http://localhost:5000/api/cost/add-cost`,
         { projectId: selectedCostProject, costId, costName, costAmount },
         {
           headers: { atoken },

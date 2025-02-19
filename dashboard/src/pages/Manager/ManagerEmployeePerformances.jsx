@@ -31,7 +31,7 @@ const ManagerEmployeePerformances = () => {
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-employees-performances-for-manager`,
+        `http://localhost:5000/api/user/get-employees-performances-for-manager`,
         {
           headers: { mtoken },
         }
@@ -70,7 +70,7 @@ const ManagerEmployeePerformances = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/performances/get-date-wise-for-manager/${date}`,
+          `http://localhost:5000/api/performances/get-date-wise-for-manager/${date}`,
           { headers: { mtoken } }
         );
 
@@ -86,7 +86,7 @@ const ManagerEmployeePerformances = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/performances/get-month-wise-for-manager/${month}/${year}`,
+          `http://localhost:5000/api/performances/get-month-wise-for-manager/${month}/${year}`,
           { headers: { mtoken } }
         );
 
@@ -102,7 +102,7 @@ const ManagerEmployeePerformances = () => {
     } else if (viewBy === "employee" && employeeIdForFetch) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/performances/get-employee-wise/${employeeIdForFetch}`,
+          `http://localhost:5000/api/performances/get-employee-wise/${employeeIdForFetch}`,
           { headers: { mtoken } }
         );
 
@@ -123,7 +123,7 @@ const ManagerEmployeePerformances = () => {
   const handleApprove = async (performanceId) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/performances/change-status-manager/${performanceId}`,
+        `http://localhost:5000/api/performances/change-status-manager/${performanceId}`,
         { status: "approved" },
         { headers: { mtoken } }
       );
@@ -142,7 +142,7 @@ const ManagerEmployeePerformances = () => {
   const handleReject = async (performanceId) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/performances/change-status-manager/${performanceId}`,
+        `http://localhost:5000/api/performances/change-status-manager/${performanceId}`,
         { status: "rejected" },
         { headers: { mtoken } }
       );

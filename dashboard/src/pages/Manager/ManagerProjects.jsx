@@ -34,7 +34,7 @@ const ManagerProjects = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-projects`,
+        `http://localhost:5000/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -53,7 +53,7 @@ const ManagerProjects = () => {
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-profile`,
+        `http://localhost:5000/api/user/get-my-profile`,
         {
           headers: { mtoken },
         }
@@ -68,7 +68,7 @@ const ManagerProjects = () => {
   const getCosts = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/cost/get-cost-added-by-manager`,
+        `http://localhost:5000/api/cost/get-cost-added-by-manager`,
         {
           headers: { mtoken },
         }
@@ -111,7 +111,7 @@ const ManagerProjects = () => {
       }
 
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/cost/add-cost-manager`,
+        `http://localhost:5000/api/cost/add-cost-manager`,
         { projectId: selectedProject, costId, costName, costAmount },
         {
           headers: { mtoken },
@@ -143,23 +143,15 @@ const ManagerProjects = () => {
         return;
       }
 
-      const currentDateTime = new Date();
-
-      // Format date as 'yyyy-mm-dd'
-      const date = currentDateTime.toISOString().split("T")[0]; // Get the date in 'yyyy-mm-dd' format
-      const time = currentDateTime.toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      });
+      const startDate = new Date(); // Get current date and time
+      const startTime = startDate.toISOString(); // Convert it to ISO string format
 
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/project-log/start-project`,
+        `http://localhost:5000/api/project-log/start-project`,
         {
           projectId,
           projectPassword,
-          startDate: date,
-          startTime: time,
+          startTime, // Send the start time (ISO string)
         },
         {
           headers: { mtoken },
@@ -170,13 +162,13 @@ const ManagerProjects = () => {
         const logId = data.logId;
         localStorage.setItem("currentLogId", logId);
         setIsTracking(true);
-        setStartDate(date); // Set start date locally
-        setStartTime(time); // Set start time locally
+        setStartTime(startTime); // Set start time locally
         toast.success(data.message);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
+      console.error("Error starting project:", error);
       toast.error(
         error.response?.data?.message || "An unexpected error occurred."
       );
@@ -197,22 +189,11 @@ const ManagerProjects = () => {
         return;
       }
 
-      const currentDateTime = new Date(); // Ensure this is declared inside the function
-
-      // Format date as 'yyyy-mm-dd'
-      const date = currentDateTime.toISOString().split("T")[0]; // Get the date in 'yyyy-mm-dd' format
-      const time = currentDateTime.toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      });
-
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/project-log/end-project`,
+        `http://localhost:5000/api/project-log/end-project`,
         {
           logId,
-          endDate: date, // Send endDate in 'yyyy-mm-dd' format
-          endTime: time, // Send endTime
+          endTime: Date.now(), // Send end time as part of the request
         },
         {
           headers: { mtoken },
@@ -222,14 +203,18 @@ const ManagerProjects = () => {
       if (data.success) {
         toast.success(data.message);
         localStorage.removeItem("currentLogId");
+        localStorage.removeItem("selectedProjectId");
+        localStorage.removeItem("selectedProjectPassword");
+        setProjectId("");
+        setProjectPassword("");
         setIsTracking(false);
-        setStartDate(null);
         setStartTime(null);
         getProjects();
       } else {
         toast.error(data.message);
       }
     } catch (error) {
+      console.error("Error stopping project:", error);
       toast.error(
         error.response?.data?.message || "An unexpected error occurred."
       );
@@ -237,15 +222,34 @@ const ManagerProjects = () => {
   };
 
   useEffect(() => {
+    // Check if there's a running project in localStorage
     const logId = localStorage.getItem("currentLogId");
     if (logId) {
+      // If there's a log ID, set tracking state to true and fetch the start time
+      setProjectId(localStorage.getItem("selectedProjectId"));
+      setProjectPassword(localStorage.getItem("selectedProjectPassword"));
       setIsTracking(true);
+      setStartTime(localStorage.getItem("startTime"));
     }
   }, []);
-
   // Function to toggle password visibility
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
+  };
+
+  const handleProjectSelectChange = (e) => {
+    const selectedProject = e.target.value;
+    setProjectId(selectedProject);
+    setProjectPassword(""); // Reset password when changing projects
+    localStorage.setItem("selectedProjectId", selectedProject);
+  };
+  
+
+  // Update project password and save to localStorage
+  const handlePasswordChange = (e) => {
+    const password = e.target.value;
+    setProjectPassword(password);
+    localStorage.setItem("selectedProjectPassword", password);
   };
 
   return (
@@ -278,22 +282,30 @@ const ManagerProjects = () => {
             Time Capture for:
           </label>
         </div>
-        <input
-          type="text"
-          placeholder="Enter Project ID"
-          disabled={isTracking}
+        <select
           value={projectId}
-          onChange={(e) => setProjectId(e.target.value)}
+          onChange={handleProjectSelectChange}
           className="p-2 border rounded-md w-1/3 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
-        />
+        >
+          <option value="" disabled>
+            Select a project
+          </option>
+          {projects.map((project) => (
+            <option key={project.projectId} value={project.projectId}>
+              {project.projectId} - {project.projectName}
+            </option>
+          ))}
+        </select>
         <div className="relative w-1/3">
           <input
             type={passwordVisible ? "text" : "password"}
             placeholder="Enter Project Password"
-            disabled={isTracking}
             value={projectPassword}
-            onChange={(e) => setProjectPassword(e.target.value)}
+            onChange={handlePasswordChange}
             className="p-2 border rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
+            autoComplete="off"
+            name="fakePassword"
+            id="fakePassword"
           />
           <button
             type="button"

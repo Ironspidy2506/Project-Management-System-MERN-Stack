@@ -29,7 +29,7 @@ const ManagerTasks = () => {
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-profile`,
+        `http://localhost:5000/api/user/get-my-profile`,
         {
           headers: { mtoken },
         }
@@ -43,7 +43,7 @@ const ManagerTasks = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-projects`,
+        `http://localhost:5000/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -58,7 +58,7 @@ const ManagerTasks = () => {
   const getTasks = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-tasks`,
+        `http://localhost:5000/api/user/get-my-tasks`,
         {
           headers: { mtoken },
         }
@@ -132,7 +132,7 @@ const ManagerTasks = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/tasks/add-task`,
+        `http://localhost:5000/api/tasks/add-task`,
         {
           projectId,
           taskId,
@@ -172,7 +172,7 @@ const ManagerTasks = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/tasks/edit-task/${taskDatabaseId}`,
+        `http://localhost:5000/api/tasks/edit-task/${taskDatabaseId}`,
         {
           task,
           startDate,
@@ -203,7 +203,7 @@ const ManagerTasks = () => {
   const handleUpdateStatus = async (taskId, status) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/tasks/complete-task/${taskId}`,
+        `http://localhost:5000/api/tasks/complete-task/${taskId}`,
         { status },
         { headers: { mtoken } }
       );
@@ -220,7 +220,7 @@ const ManagerTasks = () => {
   const handleDeleteTask = async (taskId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms.onrender.com/api/tasks/delete-task/${taskId}`,
+        `http://localhost:5000/api/tasks/delete-task/${taskId}`,
         { headers: { mtoken } }
       );
 
@@ -237,7 +237,7 @@ const ManagerTasks = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/tasks/get-date-wise/${date}`,
+          `http://localhost:5000/api/tasks/get-date-wise/${date}`,
           { headers: { mtoken } }
         );
 
@@ -253,7 +253,7 @@ const ManagerTasks = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/tasks/get-month-wise/${month}/${year}`,
+          `http://localhost:5000/api/tasks/get-month-wise/${month}/${year}`,
           { headers: { mtoken } }
         );
 
