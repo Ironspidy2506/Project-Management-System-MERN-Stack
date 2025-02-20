@@ -14,7 +14,7 @@ const EmployeeDashboard = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-projects`,
+        `https://korus-pms.onrender.com/api/user/get-my-projects`,
         {
           headers: { token },
         }
@@ -32,7 +32,7 @@ const EmployeeDashboard = () => {
   const getTasks = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-tasks`,
+        `https://korus-pms.onrender.com/api/user/get-my-tasks`,
         {
           headers: { token },
         }
@@ -48,7 +48,7 @@ const EmployeeDashboard = () => {
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-performances`,
+        `https://korus-pms.onrender.com/api/user/get-my-performances`,
         {
           headers: { token },
         }

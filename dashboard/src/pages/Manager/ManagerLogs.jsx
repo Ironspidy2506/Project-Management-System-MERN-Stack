@@ -29,7 +29,7 @@ const ManagerLogs = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-projects`,
+        `https://korus-pms.onrender.com/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -47,7 +47,7 @@ const ManagerLogs = () => {
   const getProjectLogs = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-project-logs`,
+        `https://korus-pms.onrender.com/api/user/get-my-project-logs`,
         {
           headers: { mtoken },
         }
@@ -109,7 +109,7 @@ const ManagerLogs = () => {
 
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/project-log/add-log`,
+        `https://korus-pms.onrender.com/api/project-log/add-log`,
         logDetails, // Use logDetails directly
         {
           headers: { mtoken },
@@ -147,7 +147,7 @@ const ManagerLogs = () => {
 
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/project-log/edit-log/${logDatabaseId}`,
+        `https://korus-pms.onrender.com/api/project-log/edit-log/${logDatabaseId}`,
         logDetails,
         {
           headers: { mtoken },
@@ -197,7 +197,7 @@ const ManagerLogs = () => {
   const handleDeleteLog = async (logId) => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:5000/api/project-log/delete-log/${logId}`,
+        `https://korus-pms.onrender.com/api/project-log/delete-log/${logId}`,
         {
           headers: { mtoken },
         }
@@ -215,7 +215,7 @@ const ManagerLogs = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/project-log/get-date-wise/${date}`,
+          `https://korus-pms.onrender.com/api/project-log/get-date-wise/${date}`,
           { headers: { mtoken } }
         );
 
@@ -234,7 +234,7 @@ const ManagerLogs = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/project-log/get-month-wise/${month}/${year}`,
+          `https://korus-pms.onrender.com/api/project-log/get-month-wise/${month}/${year}`,
           { headers: { mtoken } }
         );
 

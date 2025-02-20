@@ -34,7 +34,7 @@ const ManagerProjects = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-projects`,
+        `https://korus-pms.onrender.com/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -53,7 +53,7 @@ const ManagerProjects = () => {
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-my-profile`,
+        `https://korus-pms.onrender.com/api/user/get-my-profile`,
         {
           headers: { mtoken },
         }
@@ -68,7 +68,7 @@ const ManagerProjects = () => {
   const getCosts = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/cost/get-cost-added-by-manager`,
+        `https://korus-pms.onrender.com/api/cost/get-cost-added-by-manager`,
         {
           headers: { mtoken },
         }
@@ -111,7 +111,7 @@ const ManagerProjects = () => {
       }
 
       const { data } = await axios.post(
-        `http://localhost:5000/api/cost/add-cost-manager`,
+        `https://korus-pms.onrender.com/api/cost/add-cost-manager`,
         { projectId: selectedProject, costId, costName, costAmount },
         {
           headers: { mtoken },
@@ -147,7 +147,7 @@ const ManagerProjects = () => {
       const startTime = startDate.toISOString(); // Convert it to ISO string format
 
       const { data } = await axios.post(
-        `http://localhost:5000/api/project-log/start-project`,
+        `https://korus-pms.onrender.com/api/project-log/start-project`,
         {
           projectId,
           projectPassword,
@@ -190,7 +190,7 @@ const ManagerProjects = () => {
       }
 
       const { data } = await axios.post(
-        `http://localhost:5000/api/project-log/end-project`,
+        `https://korus-pms.onrender.com/api/project-log/end-project`,
         {
           logId,
           endTime: Date.now(), // Send end time as part of the request

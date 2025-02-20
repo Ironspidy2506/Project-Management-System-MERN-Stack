@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { AdminContext } from "../../context/AdminContext.jsx";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Logs = () => {
   const { atoken } = useContext(AdminContext);
@@ -17,7 +19,7 @@ const Logs = () => {
   const getProjectLogs = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/project-log/get-logs`,
+        `https://korus-pms.onrender.com/api/project-log/get-logs`,
         {
           headers: { atoken },
         }
@@ -119,14 +121,55 @@ const Logs = () => {
     return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`; // Format to dd-mm-yyyy hh:mm AM/PM
   };
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      filteredLogs.map((log) => ({
+        "Project ID": log.project?.projectId || "N/A",
+        "Project Name": log.project?.projectName || "N/A",
+        "Employee ID": log.user?.employeeId || "N/A",
+        "Employee Name": log.user?.name || "N/A",
+        "Start Time": log.startTime
+          ? log.added
+            ? formatAddedDateTime(log.startTime)
+            : formatCapturedDateTime(log.startTime)
+          : "N/A",
+        "End Time": log.endTime
+          ? log.added
+            ? formatAddedDateTime(log.endTime)
+            : formatCapturedDateTime(log.endTime)
+          : "Time not captured yet",
+        "Total Time (Hrs)": log.totalTime || "N/A",
+        "Log Type": log.added ? "Added" : "Captured",
+      }))
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Project Logs");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "Project_Logs.xlsx");
+  };
+
   return (
     <>
       <div className="p-6">
         {/* Header */}
-        <header className="flex justify-between items-center bg-white shadow py-5 px-4 rounded-md">
+        <header className="flex justify-between items-center bg-white shadow p-4 rounded-md">
           <h1 className="text-2xl font-semibold text-gray-700">
             Logs Management
           </h1>
+          <div className="flex gap-3">
+            <button
+              onClick={exportToExcel}
+              className="px-6 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-all"
+            >
+              Export to Excel
+            </button>
+          </div>
         </header>
 
         {/* View By Section */}

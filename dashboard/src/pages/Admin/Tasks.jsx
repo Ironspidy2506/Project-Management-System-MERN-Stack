@@ -3,6 +3,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import Select from "react-select";
 import { AdminContext } from "../../context/AdminContext.jsx";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Tasks = () => {
   const { atoken } = useContext(AdminContext);
@@ -32,7 +34,7 @@ const Tasks = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/projects/get-projects",
+        "https://korus-pms.onrender.com/api/projects/get-projects",
         {
           headers: { atoken },
         }
@@ -47,7 +49,7 @@ const Tasks = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/user/get-users",
+        "https://korus-pms.onrender.com/api/user/get-users",
         {
           headers: { atoken },
         }
@@ -66,7 +68,7 @@ const Tasks = () => {
   const getTasks = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/tasks/get-tasks",
+        "https://korus-pms.onrender.com/api/tasks/get-tasks",
         { headers: { atoken } }
       );
 
@@ -144,7 +146,7 @@ const Tasks = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/tasks/add-task-admin",
+        "https://korus-pms.onrender.com/api/tasks/add-task-admin",
         {
           projectId,
           assignedEmployee,
@@ -185,7 +187,7 @@ const Tasks = () => {
 
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/tasks/edit-task-admin/${taskDatabaseId}`,
+        `https://korus-pms.onrender.com/api/tasks/edit-task-admin/${taskDatabaseId}`,
         {
           task,
           startDate,
@@ -216,7 +218,7 @@ const Tasks = () => {
   const handleUpdateStatus = async (taskId, status) => {
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/tasks/complete-task-admin/${taskId}`,
+        `https://korus-pms.onrender.com/api/tasks/complete-task-admin/${taskId}`,
         { status },
         { headers: { atoken } }
       );
@@ -233,7 +235,7 @@ const Tasks = () => {
   const handleDeleteTask = async (taskId) => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:5000/api/tasks/delete-task-admin/${taskId}`,
+        `https://korus-pms.onrender.com/api/tasks/delete-task-admin/${taskId}`,
         { headers: { atoken } }
       );
 
@@ -315,6 +317,34 @@ const Tasks = () => {
     handleSearch();
   }, [searchQuery, tasks]);
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      filteredTasks.map((task) => ({
+        "Task ID": task.taskId,
+        "Project Name": task.project?.projectName || "",
+        Task: task.task,
+        "Emp ID": task.user?.employeeId || "",
+        "Emp Name": task.user?.name || "",
+        "Start Date": task.startDate.split("T")[0],
+        "Due Date": task.dueDate.split("T")[0],
+        Status: task.status.charAt(0).toUpperCase() + task.status.slice(1),
+      }))
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Tasks");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const data = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    saveAs(data, "Task_Data.xlsx");
+  };
+
   return (
     <>
       <div className="p-6">
@@ -323,8 +353,9 @@ const Tasks = () => {
           <h1 className="text-2xl font-semibold text-gray-700">
             Tasks Management
           </h1>
+          <div className="flex gap-2">
           <button
-            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 transition-all"
             onClick={() => {
               setShowModal(true);
               setState("Add");
@@ -339,6 +370,13 @@ const Tasks = () => {
           >
             + Assign Task
           </button>
+          <button
+            onClick={exportToExcel}
+            className="px-6 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-all"
+          >
+            Export to Excel
+          </button>
+          </div>
         </header>
 
         {/* View By Section */}

@@ -15,7 +15,7 @@ const AdminContextProvider = (props) => {
   const getAllDoctors = async () => {
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/admin/all-doctors`,
+        `https://korus-pms.onrender.com/api/admin/all-doctors`,
         {},
         {
           headers: { atoken },
@@ -35,7 +35,7 @@ const AdminContextProvider = (props) => {
   const changeAvailability = async (docId) => {
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/admin/change-availability`,
+        `https://korus-pms.onrender.com/api/admin/change-availability`,
         { docId },
         {
           headers: { atoken },
@@ -56,7 +56,7 @@ const AdminContextProvider = (props) => {
   const getAllAppointments = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/admin/appointments`,
+        `https://korus-pms.onrender.com/api/admin/appointments`,
         {
           headers: {
             atoken,
@@ -77,7 +77,7 @@ const AdminContextProvider = (props) => {
   const cancelAppointment = async (appointmentId) => {
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/admin/cancel-appointment",
+        "https://korus-pms.onrender.com/api/admin/cancel-appointment",
         {
           appointmentId,
         },
@@ -101,7 +101,7 @@ const AdminContextProvider = (props) => {
   const getDashboard = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5000/api/admin/dashboard",
+        "https://korus-pms.onrender.com/api/admin/dashboard",
         {
           headers: { atoken },
         }

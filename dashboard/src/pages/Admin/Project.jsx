@@ -3,6 +3,8 @@ import { AdminContext } from "../../context/AdminContext.jsx";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Project = () => {
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ const Project = () => {
     try {
       if (state === "Edit") {
         const { data } = await axios.post(
-          `http://localhost:5000/api/projects/edit-project/${projectDetails._id}`,
+          `https://korus-pms.onrender.com/api/projects/edit-project/${projectDetails._id}`,
           projectDetails,
           {
             headers: { atoken },
@@ -53,7 +55,7 @@ const Project = () => {
         }
       } else {
         const { data } = await axios.post(
-          `http://localhost:5000/api/projects/add-project`,
+          `https://korus-pms.onrender.com/api/projects/add-project`,
           projectDetails,
           {
             headers: { atoken },
@@ -76,7 +78,7 @@ const Project = () => {
   const handleDelete = async (projectId) => {
     try {
       const { data } = await axios.delete(
-        `http://localhost:5000/api/projects/delete-project/${projectId}`,
+        `https://korus-pms.onrender.com/api/projects/delete-project/${projectId}`,
         {
           headers: { atoken },
         }
@@ -95,7 +97,7 @@ const Project = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/projects/get-projects`,
+        `https://korus-pms.onrender.com/api/projects/get-projects`,
         {
           headers: { atoken },
         }
@@ -114,7 +116,7 @@ const Project = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/user/get-users`,
+        `https://korus-pms.onrender.com/api/user/get-users`,
         {
           headers: { atoken },
         }
@@ -253,7 +255,7 @@ const Project = () => {
   const getCosts = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/cost/get-costs`,
+        `https://korus-pms.onrender.com/api/cost/get-costs`,
         {
           headers: { atoken },
         }
@@ -296,7 +298,7 @@ const Project = () => {
       }
 
       const { data } = await axios.post(
-        `http://localhost:5000/api/cost/add-cost`,
+        `https://korus-pms.onrender.com/api/cost/add-cost`,
         { projectId: selectedCostProject, costId, costName, costAmount },
         {
           headers: { atoken },
@@ -319,6 +321,31 @@ const Project = () => {
         error.response?.data?.message || "An unexpected error occurred."
       );
     }
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      projects.map((project) => ({
+        "Project ID": project.projectId,
+        "Project Name": project.projectName,
+        "Estimated Cost": project.estimatedCost,
+        "Current Cost": project.currentCost || 0,
+        "Estimated Hours": project.estimatedHours || 0,
+        "Consumed Hours": project.currentHours || 0,
+        Status: project.status,
+      }))
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Projects");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "projects.xlsx");
   };
 
   return (
@@ -354,6 +381,13 @@ const Project = () => {
             onClick={() => navigate(`/projects/costs-log`)}
           >
             Cost Log
+          </button>
+
+          <button
+            onClick={exportToExcel}
+            className="px-6 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-all"
+          >
+            Export to Excel
           </button>
         </div>
       </header>
@@ -414,24 +448,26 @@ const Project = () => {
                   {project.status}
                 </td>
                 <td className="border border-gray-200 px-4 py-2 text-center">
-                  <button
-                    onClick={() => handleViewDetails(project)}
-                    className="px-2 py-1 text-base bg-blue-500 text-white rounded hover:bg-blue-600 mr-2"
-                  >
-                    View
-                  </button>
-                  <button
-                    onClick={() => handleEditButtonClick(project)}
-                    className="px-2 py-1 text-base bg-yellow-500 text-white rounded hover:bg-yellow-600 mr-2"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(project._id)}
-                    className="px-2 py-1 text-base bg-red-500 text-white rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => handleViewDetails(project)}
+                      className="px-2 py-1 text-base bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => handleEditButtonClick(project)}
+                      className="px-2 py-1 text-base bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(project._id)}
+                      className="px-2 py-1 text-base bg-red-500 text-white rounded hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

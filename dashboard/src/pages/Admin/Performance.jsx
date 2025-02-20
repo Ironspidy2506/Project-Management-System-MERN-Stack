@@ -3,6 +3,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import Select from "react-select";
 import { AdminContext } from "../../context/AdminContext.jsx";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Performance = () => {
   const { atoken } = useContext(AdminContext);
@@ -31,7 +33,7 @@ const Performance = () => {
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:5000/api/performances/get-performances`,
+        `https://korus-pms.onrender.com/api/performances/get-performances`,
         {
           headers: { atoken },
         }
@@ -65,7 +67,7 @@ const Performance = () => {
   const handleApprove = async (performanceId) => {
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/performances/change-status/${performanceId}`,
+        `https://korus-pms.onrender.com/api/performances/change-status/${performanceId}`,
         { status: "approved" },
         { headers: { atoken } }
       );
@@ -84,7 +86,7 @@ const Performance = () => {
   const handleReject = async (performanceId) => {
     try {
       const { data } = await axios.post(
-        `http://localhost:5000/api/performances/change-status/${performanceId}`,
+        `https://korus-pms.onrender.com/api/performances/change-status/${performanceId}`,
         { status: "rejected" },
         { headers: { atoken } }
       );
@@ -160,13 +162,51 @@ const Performance = () => {
     handleSearch();
   }, [searchQuery, performances]);
 
+  const exportPerformanceToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      filteredPerformances.map((performance) => ({
+        "Performance ID": performance.performanceId,
+        "Project Name": performance.project?.projectName || "",
+        "Emp ID": performance.user?.employeeId || "",
+        "Emp Name": performance.user?.name || "",
+        "Drawing Type": performance.drawingType || "",
+        Drawings: performance.drawings || "",
+        Date: performance.date.split("T")[0],
+        "Approval Status":
+          performance.status.charAt(0).toUpperCase() +
+          performance.status.slice(1),
+      }))
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Performance Data");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const data = new Blob([excelBuffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    saveAs(data, "Performance_Data.xlsx");
+  };
+
   return (
     <div className="p-6">
       {/* Header */}
-      <header className="flex justify-between items-center bg-white shadow py-5 px-4 rounded-md">
+      <header className="flex justify-between items-center bg-white shadow p-4 rounded-md">
         <h1 className="text-2xl font-semibold text-gray-700">
           Performances Management
         </h1>
+        <div className="flex gap-3">
+          <button
+            onClick={exportPerformanceToExcel}
+            className="px-6 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-all"
+          >
+            Export to Excel
+          </button>
+        </div>
       </header>
 
       {/* View By Section */}
