@@ -2,6 +2,8 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { AdminContext } from "../../context/AdminContext.jsx";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 const Employee = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -176,6 +178,31 @@ const Employee = () => {
       employee.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      employees.map((emp) => ({
+        "Employee ID": emp.employeeId,
+        Name: emp.name,
+        Email: emp.email,
+        Department: emp.department.departmentName,
+        Branch: emp.branch,
+        Role: emp.role,
+        Phone: emp.phone,
+      }))
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "employees.xlsx");
+  };
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -189,6 +216,12 @@ const Employee = () => {
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
             + Add Employee
+          </button>
+          <button
+            onClick={exportToExcel}
+            className="px-6 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-all"
+          >
+            Export to Excel
           </button>
         </div>
       </header>
