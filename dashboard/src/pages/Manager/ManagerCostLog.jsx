@@ -19,7 +19,7 @@ const ManagerCostLog = () => {
   const getCosts = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/cost/get-cost-added-by-manager`,
+        `https://korus-pms-backend.onrender.com/api/cost/get-cost-added-by-manager`,
         {
           headers: { mtoken },
         }
@@ -45,7 +45,7 @@ const ManagerCostLog = () => {
   const handleSave = async (costId) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/cost/edit-cost-manager/${costId}`,
+        `https://korus-pms-backend.onrender.com/api/cost/edit-cost-manager/${costId}`,
         editedCost,
         { headers: { mtoken } }
       );
@@ -67,7 +67,7 @@ const ManagerCostLog = () => {
   const handleDelete = async (costId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms.onrender.com/api/cost/delete-cost-manager/${costId}`,
+        `https://korus-pms-backend.onrender.com/api/cost/delete-cost-manager/${costId}`,
         { headers: { mtoken } }
       );
 

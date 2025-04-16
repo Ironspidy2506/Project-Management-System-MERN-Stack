@@ -32,7 +32,7 @@ const ManagerEmployeeTasks = () => {
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        "https://korus-pms.onrender.com/api/user/get-my-profile",
+        "https://korus-pms-backend.onrender.com/api/user/get-my-profile",
         {
           headers: { mtoken },
         }
@@ -46,7 +46,7 @@ const ManagerEmployeeTasks = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        "https://korus-pms.onrender.com/api/user/get-my-projects",
+        "https://korus-pms-backend.onrender.com/api/user/get-my-projects",
         {
           headers: { mtoken },
         }
@@ -61,7 +61,7 @@ const ManagerEmployeeTasks = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        "https://korus-pms.onrender.com/api/user/get-users-manager",
+        "https://korus-pms-backend.onrender.com/api/user/get-users-manager",
         {
           headers: { mtoken },
         }
@@ -80,7 +80,7 @@ const ManagerEmployeeTasks = () => {
   const getTasks = async () => {
     try {
       const { data } = await axios.get(
-        "https://korus-pms.onrender.com/api/tasks/get-tasks-assigned-by-manager",
+        "https://korus-pms-backend.onrender.com/api/tasks/get-tasks-assigned-by-manager",
         { headers: { mtoken } }
       );
 
@@ -158,7 +158,7 @@ const ManagerEmployeeTasks = () => {
 
     try {
       const { data } = await axios.post(
-        "https://korus-pms.onrender.com/api/tasks/add-task",
+        "https://korus-pms-backend.onrender.com/api/tasks/add-task",
         {
           projectId,
           assignedEmployee,
@@ -199,7 +199,7 @@ const ManagerEmployeeTasks = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/tasks/edit-task/${taskDatabaseId}`,
+        `https://korus-pms-backend.onrender.com/api/tasks/edit-task/${taskDatabaseId}`,
         {
           task,
           startDate,
@@ -230,7 +230,7 @@ const ManagerEmployeeTasks = () => {
   const handleUpdateStatus = async (taskId, status) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/tasks/complete-task/${taskId}`,
+        `https://korus-pms-backend.onrender.com/api/tasks/complete-task/${taskId}`,
         { status },
         { headers: { mtoken } }
       );
@@ -247,7 +247,7 @@ const ManagerEmployeeTasks = () => {
   const handleDeleteTask = async (taskId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms.onrender.com/api/tasks/delete-task/${taskId}`,
+        `https://korus-pms-backend.onrender.com/api/tasks/delete-task/${taskId}`,
         { headers: { mtoken } }
       );
 
@@ -264,7 +264,7 @@ const ManagerEmployeeTasks = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/tasks/get-date-wise-for-manager/${date}`,
+          `https://korus-pms-backend.onrender.com/api/tasks/get-date-wise-for-manager/${date}`,
           { headers: { mtoken } }
         );
 
@@ -280,7 +280,7 @@ const ManagerEmployeeTasks = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/tasks/get-month-wise-for-manager/${month}/${year}`,
+          `https://korus-pms-backend.onrender.com/api/tasks/get-month-wise-for-manager/${month}/${year}`,
           { headers: { mtoken } }
         );
 
@@ -296,7 +296,7 @@ const ManagerEmployeeTasks = () => {
     } else if (viewBy === "employee" && employeeIdForFetch) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms.onrender.com/api/tasks/get-employee-wise/${employeeIdForFetch}`,
+          `https://korus-pms-backend.onrender.com/api/tasks/get-employee-wise/${employeeIdForFetch}`,
           { headers: { mtoken } }
         );
 

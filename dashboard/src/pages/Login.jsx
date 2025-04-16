@@ -27,7 +27,7 @@ const Login = () => {
     try {
       if (state === "Admin") {
         const { data } = await axios.post(
-          `https://korus-pms.onrender.com/api/admin/login`,
+          `https://korus-pms-backend.onrender.com/api/admin/login`,
           { email, password }
         );
 
@@ -39,7 +39,7 @@ const Login = () => {
         }
       } else {
         const { data } = await axios.post(
-          `https://korus-pms.onrender.com/api/user/login`,
+          `https://korus-pms-backend.onrender.com/api/user/login`,
           { email, password }
         );
 

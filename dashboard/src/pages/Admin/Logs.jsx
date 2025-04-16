@@ -19,7 +19,7 @@ const Logs = () => {
   const getProjectLogs = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/project-log/get-logs`,
+        `https://korus-pms-backend.onrender.com/api/project-log/get-logs`,
         {
           headers: { atoken },
         }

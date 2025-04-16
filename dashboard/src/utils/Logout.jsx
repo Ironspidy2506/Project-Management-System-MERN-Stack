@@ -15,7 +15,7 @@ export const logout = async (
   if (logId) {
     try {
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/project-log/end-project`,
+        `https://korus-pms-backend.onrender.com/api/project-log/end-project`,
         {
           logId,
           endTime: Date.now(),

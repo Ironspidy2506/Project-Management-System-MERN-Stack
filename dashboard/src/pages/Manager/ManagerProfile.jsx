@@ -10,7 +10,7 @@ const ManagerProfile = () => {
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-my-profile`,
+        `https://korus-pms-backend.onrender.com/api/user/get-my-profile`,
         {
           headers: { mtoken },
         }

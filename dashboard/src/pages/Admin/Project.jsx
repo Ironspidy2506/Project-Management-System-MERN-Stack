@@ -41,7 +41,7 @@ const Project = () => {
     try {
       if (state === "Edit") {
         const { data } = await axios.post(
-          `https://korus-pms.onrender.com/api/projects/edit-project/${projectDetails._id}`,
+          `https://korus-pms-backend.onrender.com/api/projects/edit-project/${projectDetails._id}`,
           projectDetails,
           {
             headers: { atoken },
@@ -55,7 +55,7 @@ const Project = () => {
         }
       } else {
         const { data } = await axios.post(
-          `https://korus-pms.onrender.com/api/projects/add-project`,
+          `https://korus-pms-backend.onrender.com/api/projects/add-project`,
           projectDetails,
           {
             headers: { atoken },
@@ -78,7 +78,7 @@ const Project = () => {
   const handleDelete = async (projectId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms.onrender.com/api/projects/delete-project/${projectId}`,
+        `https://korus-pms-backend.onrender.com/api/projects/delete-project/${projectId}`,
         {
           headers: { atoken },
         }
@@ -97,7 +97,7 @@ const Project = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/projects/get-projects`,
+        `https://korus-pms-backend.onrender.com/api/projects/get-projects`,
         {
           headers: { atoken },
         }
@@ -116,7 +116,7 @@ const Project = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/user/get-users`,
+        `https://korus-pms-backend.onrender.com/api/user/get-users`,
         {
           headers: { atoken },
         }
@@ -255,7 +255,7 @@ const Project = () => {
   const getCosts = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms.onrender.com/api/cost/get-costs`,
+        `https://korus-pms-backend.onrender.com/api/cost/get-costs`,
         {
           headers: { atoken },
         }
@@ -298,7 +298,7 @@ const Project = () => {
       }
 
       const { data } = await axios.post(
-        `https://korus-pms.onrender.com/api/cost/add-cost`,
+        `https://korus-pms-backend.onrender.com/api/cost/add-cost`,
         { projectId: selectedCostProject, costId, costName, costAmount },
         {
           headers: { atoken },
