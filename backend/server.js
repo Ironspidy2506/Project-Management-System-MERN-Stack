@@ -20,7 +20,7 @@ dbConnect();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://korus-pms.vercel.app",
+    origin: ["https://korus-pms.vercel.app", "http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
@@ -40,6 +40,4 @@ app.get("/", (req, res) => {
   res.send("API Working");
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+export default app;
