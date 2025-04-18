@@ -33,7 +33,7 @@ const ManagerPerformance = () => {
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-profile`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-profile`,
         {
           headers: { mtoken },
         }
@@ -47,7 +47,7 @@ const ManagerPerformance = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-users-for-performance`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-users-for-performance`,
         {
           headers: { mtoken },
         }
@@ -68,7 +68,7 @@ const ManagerPerformance = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-projects`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -83,7 +83,7 @@ const ManagerPerformance = () => {
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-performances`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-performances`,
         {
           headers: { mtoken },
         }
@@ -122,7 +122,7 @@ const ManagerPerformance = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/performances/add-performance`,
+        `https://project-management-system-mern-stack.vercel.app/api/performances/add-performance`,
         {
           performanceId,
           projectId,
@@ -176,7 +176,7 @@ const ManagerPerformance = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/performances/edit-performance/${performanceDatabaseId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/performances/edit-performance/${performanceDatabaseId}`,
         {
           drawingType,
           date,
@@ -221,7 +221,7 @@ const ManagerPerformance = () => {
   const handleDeletePerformance = async (performanceId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms-backend.onrender.com/api/performances/delete-performance/${performanceId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/performances/delete-performance/${performanceId}`,
         {
           headers: { mtoken },
         }
@@ -288,7 +288,7 @@ const ManagerPerformance = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms-backend.onrender.com/api/performances/get-date-wise/${date}`,
+          `https://project-management-system-mern-stack.vercel.app/api/performances/get-date-wise/${date}`,
           { headers: { mtoken } }
         );
 
@@ -304,7 +304,7 @@ const ManagerPerformance = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms-backend.onrender.com/api/performances/get-month-wise/${month}/${year}`,
+          `https://project-management-system-mern-stack.vercel.app/api/performances/get-month-wise/${month}/${year}`,
           { headers: { mtoken } }
         );
 

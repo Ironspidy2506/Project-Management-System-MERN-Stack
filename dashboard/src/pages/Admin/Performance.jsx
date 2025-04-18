@@ -33,7 +33,7 @@ const Performance = () => {
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/performances/get-performances`,
+        `https://project-management-system-mern-stack.vercel.app/api/performances/get-performances`,
         {
           headers: { atoken },
         }
@@ -67,7 +67,7 @@ const Performance = () => {
   const handleApprove = async (performanceId) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/performances/change-status/${performanceId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/performances/change-status/${performanceId}`,
         { status: "approved" },
         { headers: { atoken } }
       );
@@ -86,7 +86,7 @@ const Performance = () => {
   const handleReject = async (performanceId) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/performances/change-status/${performanceId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/performances/change-status/${performanceId}`,
         { status: "rejected" },
         { headers: { atoken } }
       );

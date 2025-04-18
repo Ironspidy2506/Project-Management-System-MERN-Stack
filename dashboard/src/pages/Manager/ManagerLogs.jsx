@@ -29,7 +29,7 @@ const ManagerLogs = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-projects`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -47,7 +47,7 @@ const ManagerLogs = () => {
   const getProjectLogs = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-project-logs`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-project-logs`,
         {
           headers: { mtoken },
         }
@@ -109,7 +109,7 @@ const ManagerLogs = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/project-log/add-log`,
+        `https://project-management-system-mern-stack.vercel.app/api/project-log/add-log`,
         logDetails, // Use logDetails directly
         {
           headers: { mtoken },
@@ -147,7 +147,7 @@ const ManagerLogs = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/project-log/edit-log/${logDatabaseId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/project-log/edit-log/${logDatabaseId}`,
         logDetails,
         {
           headers: { mtoken },
@@ -197,7 +197,7 @@ const ManagerLogs = () => {
   const handleDeleteLog = async (logId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms-backend.onrender.com/api/project-log/delete-log/${logId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/project-log/delete-log/${logId}`,
         {
           headers: { mtoken },
         }
@@ -215,7 +215,7 @@ const ManagerLogs = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms-backend.onrender.com/api/project-log/get-date-wise/${date}`,
+          `https://project-management-system-mern-stack.vercel.app/api/project-log/get-date-wise/${date}`,
           { headers: { mtoken } }
         );
 
@@ -234,7 +234,7 @@ const ManagerLogs = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms-backend.onrender.com/api/project-log/get-month-wise/${month}/${year}`,
+          `https://project-management-system-mern-stack.vercel.app/api/project-log/get-month-wise/${month}/${year}`,
           { headers: { mtoken } }
         );
 

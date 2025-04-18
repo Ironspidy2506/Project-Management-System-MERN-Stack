@@ -34,7 +34,7 @@ const ManagerProjects = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-projects`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -53,7 +53,7 @@ const ManagerProjects = () => {
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-profile`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-profile`,
         {
           headers: { mtoken },
         }
@@ -68,7 +68,7 @@ const ManagerProjects = () => {
   const getCosts = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/cost/get-cost-added-by-manager`,
+        `https://project-management-system-mern-stack.vercel.app/api/cost/get-cost-added-by-manager`,
         {
           headers: { mtoken },
         }
@@ -111,7 +111,7 @@ const ManagerProjects = () => {
       }
 
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/cost/add-cost-manager`,
+        `https://project-management-system-mern-stack.vercel.app/api/cost/add-cost-manager`,
         { projectId: selectedProject, costId, costName, costAmount },
         {
           headers: { mtoken },
@@ -147,7 +147,7 @@ const ManagerProjects = () => {
       const startTime = startDate.toISOString(); // Convert it to ISO string format
 
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/project-log/start-project`,
+        `https://project-management-system-mern-stack.vercel.app/api/project-log/start-project`,
         {
           projectId,
           projectPassword,
@@ -190,7 +190,7 @@ const ManagerProjects = () => {
       }
 
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/project-log/end-project`,
+        `https://project-management-system-mern-stack.vercel.app/api/project-log/end-project`,
         {
           logId,
           endTime: Date.now(), // Send end time as part of the request

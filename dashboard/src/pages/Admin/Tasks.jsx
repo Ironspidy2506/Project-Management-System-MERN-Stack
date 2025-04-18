@@ -34,7 +34,7 @@ const Tasks = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        "https://korus-pms-backend.onrender.com/api/projects/get-projects",
+        "https://project-management-system-mern-stack.vercel.app/api/projects/get-projects",
         {
           headers: { atoken },
         }
@@ -49,7 +49,7 @@ const Tasks = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        "https://korus-pms-backend.onrender.com/api/user/get-users",
+        "https://project-management-system-mern-stack.vercel.app/api/user/get-users",
         {
           headers: { atoken },
         }
@@ -68,7 +68,7 @@ const Tasks = () => {
   const getTasks = async () => {
     try {
       const { data } = await axios.get(
-        "https://korus-pms-backend.onrender.com/api/tasks/get-tasks",
+        "https://project-management-system-mern-stack.vercel.app/api/tasks/get-tasks",
         { headers: { atoken } }
       );
 
@@ -146,7 +146,7 @@ const Tasks = () => {
 
     try {
       const { data } = await axios.post(
-        "https://korus-pms-backend.onrender.com/api/tasks/add-task-admin",
+        "https://project-management-system-mern-stack.vercel.app/api/tasks/add-task-admin",
         {
           projectId,
           assignedEmployee,
@@ -187,7 +187,7 @@ const Tasks = () => {
 
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/tasks/edit-task-admin/${taskDatabaseId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/tasks/edit-task-admin/${taskDatabaseId}`,
         {
           task,
           startDate,
@@ -218,7 +218,7 @@ const Tasks = () => {
   const handleUpdateStatus = async (taskId, status) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/tasks/complete-task-admin/${taskId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/tasks/complete-task-admin/${taskId}`,
         { status },
         { headers: { atoken } }
       );
@@ -235,7 +235,7 @@ const Tasks = () => {
   const handleDeleteTask = async (taskId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms-backend.onrender.com/api/tasks/delete-task-admin/${taskId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/tasks/delete-task-admin/${taskId}`,
         { headers: { atoken } }
       );
 

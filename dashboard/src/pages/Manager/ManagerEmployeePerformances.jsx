@@ -31,7 +31,7 @@ const ManagerEmployeePerformances = () => {
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-employees-performances-for-manager`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-employees-performances-for-manager`,
         {
           headers: { mtoken },
         }
@@ -70,7 +70,7 @@ const ManagerEmployeePerformances = () => {
     if (viewBy === "date" && date) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms-backend.onrender.com/api/performances/get-date-wise-for-manager/${date}`,
+          `https://project-management-system-mern-stack.vercel.app/api/performances/get-date-wise-for-manager/${date}`,
           { headers: { mtoken } }
         );
 
@@ -86,7 +86,7 @@ const ManagerEmployeePerformances = () => {
     } else if (viewBy === "month" && month && year) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms-backend.onrender.com/api/performances/get-month-wise-for-manager/${month}/${year}`,
+          `https://project-management-system-mern-stack.vercel.app/api/performances/get-month-wise-for-manager/${month}/${year}`,
           { headers: { mtoken } }
         );
 
@@ -102,7 +102,7 @@ const ManagerEmployeePerformances = () => {
     } else if (viewBy === "employee" && employeeIdForFetch) {
       try {
         const { data } = await axios.get(
-          `https://korus-pms-backend.onrender.com/api/performances/get-employee-wise/${employeeIdForFetch}`,
+          `https://project-management-system-mern-stack.vercel.app/api/performances/get-employee-wise/${employeeIdForFetch}`,
           { headers: { mtoken } }
         );
 
@@ -123,7 +123,7 @@ const ManagerEmployeePerformances = () => {
   const handleApprove = async (performanceId) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/performances/change-status-manager/${performanceId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/performances/change-status-manager/${performanceId}`,
         { status: "approved" },
         { headers: { mtoken } }
       );
@@ -142,7 +142,7 @@ const ManagerEmployeePerformances = () => {
   const handleReject = async (performanceId) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/performances/change-status-manager/${performanceId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/performances/change-status-manager/${performanceId}`,
         { status: "rejected" },
         { headers: { mtoken } }
       );

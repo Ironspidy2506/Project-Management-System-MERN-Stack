@@ -31,7 +31,7 @@ const ManagerEmployee = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-users-manager`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-users-manager`,
         {
           headers: { mtoken },
         }

@@ -18,7 +18,7 @@ const ManagerEmployeeLogs = () => {
   const getProjectLogs = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/project-log/get-employee-project-logs`,
+        `https://project-management-system-mern-stack.vercel.app/api/project-log/get-employee-project-logs`,
         {
           headers: { mtoken },
         }

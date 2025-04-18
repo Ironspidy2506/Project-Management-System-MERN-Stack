@@ -10,7 +10,7 @@ const EmployeeProfile = () => {
   const getProfile = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-profile`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-profile`,
         {
           headers: { token },
         }

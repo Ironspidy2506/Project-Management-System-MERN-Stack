@@ -27,7 +27,7 @@ const Login = () => {
     try {
       if (state === "Admin") {
         const { data } = await axios.post(
-          `https://korus-pms-backend.onrender.com/api/admin/login`,
+          `https://project-management-system-mern-stack.vercel.app/api/admin/login`,
           { email, password }
         );
 
@@ -39,7 +39,7 @@ const Login = () => {
         }
       } else {
         const { data } = await axios.post(
-          `https://korus-pms-backend.onrender.com/api/user/login`,
+          `https://project-management-system-mern-stack.vercel.app/api/user/login`,
           { email, password }
         );
 

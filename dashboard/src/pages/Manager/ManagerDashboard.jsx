@@ -15,7 +15,7 @@ const ManagerDashboard = () => {
   const getProjects = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-projects`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-projects`,
         {
           headers: { mtoken },
         }
@@ -33,7 +33,7 @@ const ManagerDashboard = () => {
   const getTasks = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-tasks`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-tasks`,
         {
           headers: { mtoken },
         }
@@ -49,7 +49,7 @@ const ManagerDashboard = () => {
   const getEmployees = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-users-manager`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-users-manager`,
         {
           headers: { mtoken },
         }
@@ -68,7 +68,7 @@ const ManagerDashboard = () => {
   const getPerformances = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/user/get-my-performances`,
+        `https://project-management-system-mern-stack.vercel.app/api/user/get-my-performances`,
         {
           headers: { mtoken },
         }

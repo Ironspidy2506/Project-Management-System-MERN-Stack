@@ -31,7 +31,7 @@ const Department = () => {
   const getDepartments = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/department/get-departments`,
+        `https://project-management-system-mern-stack.vercel.app/api/department/get-departments`,
         {
           headers: { atoken },
         }
@@ -59,7 +59,7 @@ const Department = () => {
     if (state === "Add") {
       try {
         const { data } = await axios.post(
-          `https://korus-pms-backend.onrender.com/api/department/add-department`,
+          `https://project-management-system-mern-stack.vercel.app/api/department/add-department`,
           departmentDetails,
           {
             headers: { atoken },
@@ -78,7 +78,7 @@ const Department = () => {
     } else if (state === "Edit") {
       try {
         const { data } = await axios.post(
-          `https://korus-pms-backend.onrender.com/api/department/edit-department/${departmentDetails._id}`,
+          `https://project-management-system-mern-stack.vercel.app/api/department/edit-department/${departmentDetails._id}`,
           departmentDetails,
           {
             headers: { atoken },
@@ -110,7 +110,7 @@ const Department = () => {
   const handleDeleteDepartment = async (_id) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms-backend.onrender.com/api/department/delete-department/${_id}`,
+        `https://project-management-system-mern-stack.vercel.app/api/department/delete-department/${_id}`,
         {
           headers: { atoken },
         }

@@ -19,7 +19,7 @@ const CostLogs = () => {
   const getCosts = async () => {
     try {
       const { data } = await axios.get(
-        `https://korus-pms-backend.onrender.com/api/cost/get-costs`,
+        `https://project-management-system-mern-stack.vercel.app/api/cost/get-costs`,
         {
           headers: { atoken },
         }
@@ -45,7 +45,7 @@ const CostLogs = () => {
   const handleSave = async (costId) => {
     try {
       const { data } = await axios.post(
-        `https://korus-pms-backend.onrender.com/api/cost/edit-cost/${costId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/cost/edit-cost/${costId}`,
         editedCost,
         { headers: { atoken } }
       );
@@ -67,7 +67,7 @@ const CostLogs = () => {
   const handleDelete = async (costId) => {
     try {
       const { data } = await axios.delete(
-        `https://korus-pms-backend.onrender.com/api/cost/delete-cost/${costId}`,
+        `https://project-management-system-mern-stack.vercel.app/api/cost/delete-cost/${costId}`,
         { headers: { atoken } }
       );
 
